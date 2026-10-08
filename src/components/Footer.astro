@@ -1,0 +1,25 @@
+---
+import { site } from '../data/site';
+---
+
+<footer>
+  <div class="container inner">
+    <span>© {new Date().getFullYear()} {site.name}</span>
+    <span class="mono">Hecho con Astro · edición 8-bit</span>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+  }
+</style>

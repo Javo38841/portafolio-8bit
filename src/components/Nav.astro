@@ -1,0 +1,64 @@
+---
+import { site, withBase } from '../data/site';
+
+const links = [
+  { href: withBase('/#sobre-mi'), label: 'Sobre mí' },
+  { href: withBase('/#proyectos'), label: 'Proyectos' },
+  { href: withBase('/#enseno'), label: 'Enseño' },
+  { href: withBase('/#contacto'), label: 'Contacto' },
+];
+---
+
+<div class="container">
+  <nav aria-label="Principal">
+    <a class="brand mono" href={withBase('/')}>{site.handle}</a>
+    <div class="links">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      {site.cvPdf && <a class="cv" href={withBase(site.cvPdf)}>CV (PDF)</a>}
+    </div>
+  </nav>
+</div>
+
+<style>
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ink);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 20px;
+    font-size: 15px;
+  }
+  .links a {
+    color: var(--ink);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .links a:hover {
+    color: var(--accent);
+  }
+  .links .cv {
+    padding: 0 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    font-weight: 600;
+  }
+</style>

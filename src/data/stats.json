@@ -1,0 +1,318 @@
+{
+  "_comment": "Hoy se escribe a mano. Objetivo: que el CI del monorepo LMS lo regenere en cada merge (reportes JSON de Jest/Playwright + gh pr list).",
+  "generatedAt": "2026-10-07",
+  "source": "conteo manual de it()/test() en el repo LMS",
+  "prsMerged": 19,
+  "environments": 2,
+  "agents": 6,
+  "tests": {
+    "todo": {
+      "label": "Todo el proyecto",
+      "short": "Todo",
+      "unit": 89,
+      "integration": 25,
+      "e2e": 5
+    },
+    "cursos": {
+      "label": "Cursos",
+      "short": "Cursos",
+      "unit": 42,
+      "integration": 12,
+      "e2e": 0
+    },
+    "auth": {
+      "label": "Auth",
+      "short": "Auth",
+      "unit": 22,
+      "integration": 6,
+      "e2e": 5
+    },
+    "adjuntos": {
+      "label": "Adjuntos",
+      "short": "Adjuntos",
+      "unit": 14,
+      "integration": 6,
+      "e2e": 0
+    }
+  },
+  "ci": {
+    "jobs": [
+      {
+        "name": "Backend (NestJS)"
+      },
+      {
+        "name": "Frontend (Angular)"
+      },
+      {
+        "name": "E2E (Playwright)"
+      }
+    ]
+  },
+  "gitflow": [
+    {
+      "pr": 12,
+      "branch": "feat/courses-frontend",
+      "base": "develop",
+      "title": "feat(courses): CRUD de cursos en frontend con inscripción"
+    },
+    {
+      "pr": 13,
+      "branch": "docs/acceso-db-test",
+      "base": "develop",
+      "title": "docs(db): guía de acceso a la base de test"
+    },
+    {
+      "pr": 14,
+      "branch": "chore/dev-backend-loopback",
+      "base": "develop",
+      "title": "chore(docker): publicar backend de dev solo en loopback"
+    },
+    {
+      "pr": 15,
+      "branch": "feat/frontend-navigation",
+      "base": "develop",
+      "title": "feat(frontend): agregar navegación compartida"
+    },
+    {
+      "pr": 16,
+      "branch": "develop",
+      "base": "main",
+      "title": "release 1.0"
+    },
+    {
+      "pr": 17,
+      "branch": "chore/docker-test-db",
+      "base": "develop",
+      "title": "chore(docker): base de test descartable para integración y E2E"
+    },
+    {
+      "pr": 35,
+      "branch": "docs/convencion-prs-por-capa",
+      "base": "develop",
+      "title": "docs: convención de PRs por capa para historias"
+    },
+    {
+      "pr": 51,
+      "branch": "feat/frontend-home",
+      "base": "develop",
+      "title": "feat(frontend): mejorar inicio con accesos por rol"
+    }
+  ],
+  "roadmap": {
+    "epics": [
+      {
+        "id": "E1",
+        "issue": 18,
+        "title": "Organizaciones y tenencia",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 29,
+            "id": "E1-H1",
+            "title": "Crear organización con admin inicial",
+            "status": "planificada"
+          },
+          {
+            "issue": 30,
+            "id": "E1-H2",
+            "title": "Aislamiento de datos por organización",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E2",
+        "issue": 19,
+        "title": "Autenticación y usuarios",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 31,
+            "id": "E2-H1",
+            "title": "Iniciar sesión y elegir organización",
+            "status": "planificada"
+          },
+          {
+            "issue": 32,
+            "id": "E2-H2",
+            "title": "Ver y editar mi perfil",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E3",
+        "issue": 20,
+        "title": "Roles y permisos",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 33,
+            "id": "E3-H1",
+            "title": "Asignar rol dentro de la organización",
+            "status": "planificada"
+          },
+          {
+            "issue": 34,
+            "id": "E3-H2",
+            "title": "Permisos efectivos por rol",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E4",
+        "issue": 21,
+        "title": "Cursos",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 36,
+            "id": "E4-H1",
+            "title": "Crear curso con fechas y visibilidad",
+            "status": "planificada"
+          },
+          {
+            "issue": 37,
+            "id": "E4-H2",
+            "title": "Organizar el curso en secciones",
+            "status": "planificada"
+          },
+          {
+            "issue": 38,
+            "id": "E4-H3",
+            "title": "Categorizar cursos (propuesta)",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E5",
+        "issue": 22,
+        "title": "Participantes y matriculación",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 39,
+            "id": "E5-H1",
+            "title": "Inscripción propia del estudiante",
+            "status": "planificada"
+          },
+          {
+            "issue": 40,
+            "id": "E5-H2",
+            "title": "Docente matricula estudiantes en su curso",
+            "status": "planificada"
+          },
+          {
+            "issue": 41,
+            "id": "E5-H3",
+            "title": "Matrícula masiva por CSV",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E6",
+        "issue": 23,
+        "title": "Actividades",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 42,
+            "id": "E6-H1",
+            "title": "Publicar tarea con fecha límite",
+            "status": "planificada"
+          },
+          {
+            "issue": 43,
+            "id": "E6-H2",
+            "title": "Subir entrega antes del plazo",
+            "status": "planificada"
+          },
+          {
+            "issue": 44,
+            "id": "E6-H3",
+            "title": "Archivo descargable del curso",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E7",
+        "issue": 24,
+        "title": "Calificaciones",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 46,
+            "id": "E7-H1",
+            "title": "Calificar una entrega con nota y comentario",
+            "status": "planificada"
+          },
+          {
+            "issue": 47,
+            "id": "E7-H2",
+            "title": "Ver mis notas por curso",
+            "status": "planificada"
+          },
+          {
+            "issue": 48,
+            "id": "E7-H3",
+            "title": "Definir escala de calificaciones por curso (propuesta)",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E8",
+        "issue": 25,
+        "title": "Navegación del usuario",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 49,
+            "id": "E8-H1",
+            "title": "Ver mis cursos con progreso en la página principal",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E9",
+        "issue": 26,
+        "title": "Progreso y finalización",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 50,
+            "id": "E9-H1",
+            "title": "Ver mi progreso en un curso (propuesta)",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E10",
+        "issue": 27,
+        "title": "Subdominios por organización",
+        "status": "planificada",
+        "stories": []
+      },
+      {
+        "id": "E11",
+        "issue": 28,
+        "title": "Calendario, noticias, avisos y notificaciones",
+        "status": "planificada",
+        "stories": []
+      }
+    ],
+    "infra": [
+      {
+        "issue": 45,
+        "title": "Publicar MinIO en files.gitflow.cl para URLs prefirmadas fuera de la LAN",
+        "status": "planificada"
+      }
+    ]
+  }
+}

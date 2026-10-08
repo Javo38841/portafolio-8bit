@@ -1,0 +1,199 @@
+---
+import stats from '../../data/stats.json';
+
+// Dibuja los PRs reales como líneas de metro: main y develop son troncales y cada
+// rama sale de develop y vuelve con su PR. Las posiciones salen del orden del array.
+const events = stats.gitflow;
+const W = 1000;
+const LEFT = 110;
+const slot = (W - LEFT - 20) / events.length;
+const Y = { main: 40, develop: 120, branch: 196 };
+
+const items = events.map((e, i) => {
+  const x0 = LEFT + i * slot + 12;
+  const x1 = x0 + slot * 0.62;
+  return { ...e, x0, x1, isRelease: e.base === 'main' };
+});
+
+const typeOf = (branch: string) => branch.split('/')[0];
+---
+
+<div class="card metro">
+  <div class="scroll">
+    <svg viewBox={`0 0 ${W} 240`} role="img" aria-labelledby="metro-title">
+      <title id="metro-title">Historial de PRs del LMS dibujado como líneas de metro</title>
+
+      <text x="0" y={Y.main + 5} class="lane-label main">main</text>
+      <line x1={LEFT - 10} y1={Y.main} x2={W} y2={Y.main} class="trunk main" />
+      <text x="0" y={Y.develop + 5} class="lane-label develop">develop</text>
+      <line x1={LEFT - 10} y1={Y.develop} x2={W} y2={Y.develop} class="trunk develop" />
+      <text x="0" y={Y.branch + 5} class="lane-label branch">ramas</text>
+
+      {
+        items.map((it) =>
+          it.isRelease ? (
+            <g class="station-group">
+              <title>{`#${it.pr} · ${it.title}`}</title>
+              <line x1={it.x0} y1={Y.develop} x2={it.x0} y2={Y.main} class="release" />
+              <circle cx={it.x0} cy={Y.main} r="10" class="stop main-stop" />
+              <text x={it.x0 + 16} y={Y.main - 12} class="pr">
+                {it.title} · #{it.pr}
+              </text>
+            </g>
+          ) : (
+            <g class="station-group">
+              <title>{`#${it.pr} · ${it.branch} · ${it.title}`}</title>
+              <path
+                d={`M${it.x0},${Y.develop} L${it.x0},${Y.branch - 10} Q${it.x0},${Y.branch} ${it.x0 + 10},${Y.branch} L${it.x1 - 10},${Y.branch} Q${it.x1},${Y.branch} ${it.x1},${Y.branch - 10} L${it.x1},${Y.develop}`}
+                class={`branch-line ${typeOf(it.branch)}`}
+              />
+              <circle cx={it.x1} cy={Y.develop} r="8" class="stop" />
+              <text x={(it.x0 + it.x1) / 2} y={Y.branch + 24} class="pr" text-anchor="middle">
+                #{it.pr}
+              </text>
+            </g>
+          ),
+        )
+      }
+    </svg>
+  </div>
+
+  <ol class="legend">
+    {
+      items
+        .filter((it) => !it.isRelease)
+        .map((it) => (
+          <li>
+            <span class="mono num">#{it.pr}</span>
+            <span class="mono branch-name">{it.branch}</span>
+            <span class="title">{it.title}</span>
+          </li>
+        ))
+    }
+  </ol>
+
+  <div class="story">
+    <span class="story-label">Una historia = varios PRs, uno por capa:</span>
+    <span class="mono step">feat(db)</span>
+    <span aria-hidden="true">→</span>
+    <span class="mono step">feat(backend)</span>
+    <span aria-hidden="true">→</span>
+    <span class="mono step">feat(frontend) · Closes #issue</span>
+  </div>
+</div>
+
+<style>
+  .metro {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .scroll {
+    overflow-x: auto;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 680px;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .lane-label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .lane-label.main {
+    fill: var(--ink);
+  }
+  .lane-label.develop {
+    fill: var(--accent);
+  }
+  .lane-label.branch {
+    fill: var(--data);
+  }
+  .trunk {
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .trunk.main {
+    stroke: var(--ink);
+  }
+  .trunk.develop {
+    stroke: var(--accent);
+  }
+  .branch-line {
+    fill: none;
+    stroke: var(--data);
+    stroke-width: 4;
+  }
+  .branch-line.docs,
+  .branch-line.chore {
+    stroke-dasharray: 8 6;
+  }
+  .release {
+    stroke: var(--ink);
+    stroke-width: 4;
+  }
+  .stop {
+    fill: var(--surface);
+    stroke: var(--accent);
+    stroke-width: 4;
+  }
+  .main-stop {
+    stroke: var(--ink);
+  }
+  .pr {
+    font-size: 13px;
+    fill: var(--ink-2);
+  }
+  .station-group:hover .branch-line {
+    stroke-width: 6;
+  }
+  .legend {
+    list-style: none;
+    margin: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 8px 24px;
+    font-size: 14px;
+  }
+  .legend li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    align-items: baseline;
+  }
+  .num {
+    color: var(--data);
+    font-weight: 600;
+  }
+  .branch-name {
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .title {
+    color: var(--muted);
+    flex-basis: 100%;
+  }
+  .story {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .story-label {
+    color: var(--muted);
+  }
+  .step {
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+</style>

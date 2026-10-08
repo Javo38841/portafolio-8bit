@@ -1,0 +1,85 @@
+---
+// El homelab real es un notebook: aquí en pixel-art, con el flujo de servicios en su pantalla.
+const units = ['UBUNTU SERVER', 'DOCKER STACKS', 'POSTGRES 16', 'RUNNER GITHUB'];
+const keys = Array.from({ length: 22 }, (_, i) => 10 + i * 8);
+---
+
+<svg viewBox="0 0 200 144" role="img" aria-labelledby="server-title server-desc" class="server" shape-rendering="crispEdges">
+  <title id="server-title">Ilustración pixel-art del homelab</title>
+  <desc id="server-desc">
+    Un notebook que hace de servidor. En su pantalla: Cloudflare Tunnel arriba y debajo Ubuntu Server, los stacks de
+    Docker, PostgreSQL 16 y el runner de GitHub Actions.
+  </desc>
+
+  <!-- tapa y pantalla -->
+  <rect x="16" y="8" width="168" height="112" class="lid"></rect>
+  <rect x="24" y="16" width="152" height="96" class="scr"></rect>
+  <rect x="24" y="16" width="152" height="12" class="bar"></rect>
+  <text x="30" y="25" class="bar-text">CLOUDFLARE TUNNEL</text>
+  <rect x="99" y="29" width="2" height="2" class="bar"></rect>
+  <rect x="99" y="32" width="2" height="2" class="bar"></rect>
+  {
+    units.map((u, i) => {
+      const y = 36 + i * 18;
+      return (
+        <g>
+          <rect x="32" y={y} width="136" height="14" class="row" />
+          <rect x="36" y={y + 4} width="6" height="6" class:list={['led', { blink: i === 3 }]} />
+          <text x="48" y={y + 10} class="row-text">
+            {u}
+          </text>
+        </g>
+      );
+    })
+  }
+
+  <!-- base con teclado -->
+  <rect x="4" y="120" width="192" height="14" class="base"></rect>
+  {keys.map((x) => <rect x={x} y="123" width="6" height="3" class="key" />)}
+  <rect x="84" y="128" width="32" height="4" class="key"></rect>
+  <rect x="4" y="134" width="192" height="4" class="base-dark"></rect>
+  <rect x="12" y="138" width="176" height="4" class="shadow"></rect>
+</svg>
+
+<style>
+  .server {
+    width: 100%;
+    height: auto;
+    display: block;
+    font-family: var(--font-display);
+  }
+  .lid {
+    fill: #2a2a2a;
+  }
+  .scr {
+    fill: var(--gb-3);
+  }
+  .bar {
+    fill: var(--gb-0);
+  }
+  .bar-text {
+    font-size: 6px;
+    fill: var(--gb-3);
+  }
+  .row {
+    fill: var(--gb-2);
+  }
+  .led {
+    fill: var(--gb-0);
+  }
+  .row-text {
+    font-size: 6px;
+    fill: var(--gb-0);
+  }
+  .base {
+    fill: var(--case);
+  }
+  .key,
+  .base-dark {
+    fill: var(--case-dark);
+  }
+  .shadow {
+    fill: var(--line);
+    opacity: 0.5;
+  }
+</style>

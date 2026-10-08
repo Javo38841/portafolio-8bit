@@ -1,0 +1,323 @@
+---
+import Icon from '../Icon.astro';
+import CopyEmail from '../CopyEmail.astro';
+import { site, withBase } from '../../data/site';
+import stats from '../../data/stats.json';
+
+const total = stats.tests.todo.unit + stats.tests.todo.integration + stats.tests.todo.e2e;
+
+const strip = [
+  { kicker: 'Hoy', text: 'Soporte TI y software · NestJS + Angular' },
+  { kicker: 'Construyo', text: 'Homelab, CI/CD y un LMS propio' },
+  { kicker: 'Enseño', text: 'Git, Java y talleres de programación' },
+  { kicker: 'Aprendo', text: 'Terraform y AWS' },
+];
+---
+
+<section class="container hero">
+  <div class="grid">
+    <div class="copy">
+      <div class="kicker">{site.role} · {site.location}</div>
+      <!-- TODO: revisar el texto final del hero -->
+      <h1>Hola, soy Javier.</h1>
+      <p class="tagline">Construyo software como en una empresa — y enseño a hacerlo.</p>
+      <p class="lead">
+        Analista de Soporte TI y Software en Intermex. Fuera del trabajo monto mi propia infraestructura: un homelab con
+        CI/CD y un LMS hecho desde cero con prácticas de equipo profesional.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href={withBase('/proyectos/lms')}>▶ Ver el caso LMS</a>
+        {
+          site.cvPdf && (
+            <a class="btn" href={withBase(site.cvPdf)} download>
+              Descargar CV
+            </a>
+          )
+        }
+        <div class="socials">
+          <a href={site.github} aria-label="GitHub" rel="me"><Icon name="github" /></a>
+          {site.linkedin && <a href={site.linkedin} aria-label="LinkedIn" rel="me"><Icon name="linkedin" /></a>}
+          <CopyEmail variant="icon" />
+        </div>
+      </div>
+    </div>
+
+    <div class="console-wrap">
+      <div class="console">
+        <div class="bezel">
+          <div class="bezel-top" aria-hidden="true">
+            <span class="led"></span>
+            <span>BATTERY</span>
+          </div>
+          <div class="screen" aria-label="Estadísticas del proyecto LMS">
+            <p class="screen-title">JAVIER.CHOQUE</p>
+            <p>TESTS....{total}</p>
+            <p>PRS......{stats.prsMerged}</p>
+            <p>AMBIENTES.{stats.environments}</p>
+            <p class="blink press">PRESS START</p>
+          </div>
+        </div>
+        <div class="brand" aria-hidden="true">JAVO BOY</div>
+        <div class="pad">
+          <div class="dpad" aria-hidden="true"><span class="h"></span><span class="v"></span></div>
+          <div class="ab">
+            <a class="key b" href="#contacto" aria-label="Botón B: ir a contacto">B</a>
+            <a class="key a" href={withBase('/proyectos/lms')} aria-label="Botón A: ver el caso LMS">A</a>
+          </div>
+        </div>
+        <div class="startselect" aria-hidden="true">
+          <span>SELECT</span>
+          <span>START</span>
+        </div>
+        <div class="speaker" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="strip">
+    {
+      strip.map((s) => (
+        <li class="card">
+          <div class="kicker">{s.kicker}</div>
+          <div class="strip-text">{s.text}</div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .hero {
+    padding-top: 56px;
+    padding-bottom: 32px;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    align-items: center;
+  }
+  .copy {
+    flex: 999 1 480px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .tagline {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .lead {
+    font-size: 19px;
+    max-width: 580px;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .socials {
+    display: flex;
+    gap: 4px;
+  }
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--ink);
+  }
+  .socials a:hover {
+    background: var(--surface);
+  }
+
+  /* ---------- consola ---------- */
+  .console-wrap {
+    flex: 1 1 300px;
+    display: flex;
+    justify-content: center;
+  }
+  .console {
+    width: 300px;
+    max-width: 100%;
+    background: var(--case);
+    padding: 20px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* esquina inferior derecha en escalera de pixeles */
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - 48px),
+      calc(100% - 8px) calc(100% - 48px),
+      calc(100% - 8px) calc(100% - 32px),
+      calc(100% - 24px) calc(100% - 32px),
+      calc(100% - 24px) calc(100% - 16px),
+      calc(100% - 40px) calc(100% - 16px),
+      calc(100% - 40px) calc(100% - 8px),
+      calc(100% - 56px) calc(100% - 8px),
+      calc(100% - 56px) 100%,
+      0 100%
+    );
+  }
+  .bezel {
+    background: #5b5e6e;
+    padding: 10px 22px 20px;
+  }
+  .bezel-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-display);
+    font-size: 6px;
+    color: #c9c5bc;
+    margin-bottom: 8px;
+  }
+  .led {
+    width: 8px;
+    height: 8px;
+    background: #e0293a;
+  }
+  .screen {
+    background: var(--gb-3);
+    color: var(--gb-0);
+    aspect-ratio: 10 / 9;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-size: 10px;
+    line-height: 1.4;
+    box-shadow: inset 4px 4px 0 0 var(--gb-2);
+  }
+  .screen-title {
+    background: var(--gb-0);
+    color: var(--gb-3);
+    padding: 4px 6px;
+    margin-bottom: 4px;
+    align-self: flex-start;
+  }
+  .press {
+    margin-top: auto;
+    align-self: center;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: #2c2f8a;
+  }
+  .pad {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px 0;
+  }
+  .dpad {
+    position: relative;
+    width: 72px;
+    height: 72px;
+  }
+  .dpad span {
+    position: absolute;
+    background: #2a2a2a;
+  }
+  .dpad .h {
+    left: 0;
+    right: 0;
+    top: 24px;
+    height: 24px;
+  }
+  .dpad .v {
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    width: 24px;
+  }
+  .ab {
+    display: flex;
+    gap: 14px;
+    transform: rotate(-20deg);
+    padding-top: 10px;
+  }
+  .key {
+    width: 48px;
+    height: 48px;
+    background: #8b1e4f;
+    color: #f4eef2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-decoration: none;
+    /* "círculo" pixelado */
+    clip-path: polygon(30% 0, 70% 0, 70% 8%, 85% 8%, 85% 15%, 92% 15%, 92% 30%, 100% 30%, 100% 70%, 92% 70%, 92% 85%, 85% 85%, 85% 92%, 70% 92%, 70% 100%, 30% 100%, 30% 92%, 15% 92%, 15% 85%, 8% 85%, 8% 70%, 0 70%, 0 30%, 8% 30%, 8% 15%, 15% 15%, 15% 8%, 30% 8%);
+  }
+  .key.a {
+    margin-top: -18px;
+  }
+  .key:hover {
+    background: #a8285f;
+    color: #ffffff;
+  }
+  .key:focus-visible {
+    outline-offset: -6px;
+  }
+  .startselect {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-family: var(--font-display);
+    font-size: 6px;
+    color: #2c2f8a;
+  }
+  .startselect span::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 8px;
+    margin: 0 auto 6px;
+    background: #7d7a74;
+    transform: rotate(-20deg);
+  }
+  .speaker {
+    align-self: flex-end;
+    width: 64px;
+    height: 36px;
+    margin-right: 10px;
+    background: repeating-linear-gradient(-60deg, var(--case-dark) 0 4px, transparent 4px 10px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .brand,
+    .startselect {
+      color: #b9bdf5;
+    }
+  }
+
+  .strip {
+    list-style: none;
+    margin: 72px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 20px;
+  }
+  .strip li {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .strip-text {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+</style>

@@ -1,0 +1,271 @@
+/* Versión 8-bit: paleta de 4 verdes de la pantalla de una consola portátil clásica (DMG). */
+:root {
+  --gb-0: #0f380f; /* más oscuro */
+  --gb-1: #306230;
+  --gb-2: #8bac0f;
+  --gb-3: #9bbc0f; /* más claro */
+  --cart: #6e1240; /* acento "cartucho" para datos */
+
+  --paper: var(--gb-2);
+  --surface: var(--gb-3);
+  --ink: var(--gb-0);
+  --ink-2: var(--gb-0);
+  --muted: var(--gb-0);
+  --line: var(--gb-1);
+  --dashed: var(--gb-1);
+  --accent: var(--gb-0);
+  --accent-hover: var(--gb-1);
+  --accent-soft: var(--gb-3);
+  --on-accent: var(--gb-3);
+  --data: var(--cart);
+  --data-soft: var(--gb-3);
+  --ok: var(--gb-0);
+  --bad: var(--cart);
+  --hatch: var(--gb-2);
+  --terminal: var(--gb-0);
+  --on-terminal: var(--gb-3);
+  --terminal-key: var(--gb-2);
+  --terminal-val: var(--gb-3);
+  --case: #c9c5bc; /* carcasa de la consola */
+  --case-dark: #a9a59c;
+
+  --font-display: 'Press Start 2P', ui-monospace, monospace;
+  --font-sans: 'Pixelify Sans', ui-monospace, monospace;
+  --font-mono: 'Pixelify Sans', ui-monospace, monospace;
+  --radius: 0px;
+  --max: 1120px;
+  --px: 4px; /* tamaño de "pixel" para bordes y sombras */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: var(--gb-0);
+    --surface: #173f17;
+    --ink: var(--gb-3);
+    --ink-2: var(--gb-3);
+    --muted: var(--gb-2);
+    --line: var(--gb-1);
+    --dashed: var(--gb-1);
+    --accent: var(--gb-3);
+    --accent-hover: var(--gb-2);
+    --accent-soft: #173f17;
+    --on-accent: var(--gb-0);
+    --data: #f2a7c3;
+    --data-soft: #173f17;
+    --ok: var(--gb-3);
+    --bad: #f2a7c3;
+    --hatch: #173f17;
+    --terminal: #082208;
+    --case: #4a4844;
+    --case-dark: #34322f;
+    color-scheme: dark;
+  }
+}
+
+/* Todo es cuadrado: en 8 bits no hay esquinas redondeadas. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0 !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  /* textura de LCD: rejilla de puntos */
+  background-image: radial-gradient(rgb(15 56 15 / 0.1) 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+img {
+  image-rendering: pixelated;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--accent-hover);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+/* Press Start 2P es muy ancha: tamaños propios que ganan a los de cada componente. */
+html body h1 {
+  font-size: clamp(20px, 3.4vw, 32px);
+  line-height: 1.5;
+}
+html body h2 {
+  font-size: clamp(18px, 2.6vw, 24px);
+}
+html body h3 {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: var(--px) dashed var(--ink);
+  outline-offset: var(--px);
+}
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+@media (min-width: 720px) {
+  .container {
+    padding: 0 24px;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.kicker {
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* Borde pixelado: 4 sombras sin difuminar dejan las esquinas "mordidas". */
+.card,
+.pixel-box {
+  background: var(--surface);
+  border: none !important;
+  box-shadow:
+    calc(var(--px) * -1) 0 0 0 var(--ink),
+    var(--px) 0 0 0 var(--ink),
+    0 calc(var(--px) * -1) 0 0 var(--ink),
+    0 var(--px) 0 0 var(--ink),
+    calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--line);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 20px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--surface);
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    calc(var(--px) * -1) 0 0 0 var(--ink),
+    var(--px) 0 0 0 var(--ink),
+    0 calc(var(--px) * -1) 0 0 var(--ink),
+    0 var(--px) 0 0 var(--ink),
+    var(--px) calc(var(--px) * 2) 0 0 var(--ink);
+}
+.btn:hover {
+  color: var(--ink);
+  background: var(--hatch);
+}
+.btn:active {
+  transform: translate(var(--px), var(--px));
+  box-shadow:
+    calc(var(--px) * -1) 0 0 0 var(--ink),
+    var(--px) 0 0 0 var(--ink),
+    0 calc(var(--px) * -1) 0 0 var(--ink),
+    0 var(--px) 0 0 var(--ink);
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--on-accent);
+}
+.btn-primary:hover {
+  background: var(--line);
+  color: var(--on-accent);
+}
+
+.placeholder {
+  background: repeating-linear-gradient(90deg, var(--hatch) 0 8px, var(--surface) 8px 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+  text-align: center;
+  padding: 16px;
+  box-shadow:
+    calc(var(--px) * -1) 0 0 0 var(--line),
+    var(--px) 0 0 0 var(--line),
+    0 calc(var(--px) * -1) 0 0 var(--line),
+    0 var(--px) 0 0 var(--line);
+}
+
+.section {
+  padding: 72px 0;
+  scroll-margin-top: 16px;
+}
+@media (min-width: 720px) {
+  .section {
+    padding: 96px 0;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

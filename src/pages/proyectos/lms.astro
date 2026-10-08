@@ -1,0 +1,555 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Icon from '../../components/Icon.astro';
+import Counters from '../../components/lms/Counters.astro';
+import Pipeline from '../../components/lms/Pipeline.astro';
+import TestPyramid from '../../components/lms/TestPyramid.astro';
+import GitMetro from '../../components/lms/GitMetro.astro';
+import Roadmap from '../../components/lms/Roadmap.astro';
+import { withBase } from '../../data/site';
+
+const rules = [
+  { icon: 'branch', title: 'Todo entra por Pull Request', text: 'Nunca hay commits directos a develop ni a main.', to: 's05', toLabel: '05 GitFlow' },
+  { icon: 'lines', title: 'Ramas tipadas + Conventional Commits', text: 'feat/, fix/, docs/, chore/… y commits pequeños.', to: 's05', toLabel: '05 GitFlow' },
+  { icon: 'layers', title: 'Un PR por capa', text: 'Una historia se entrega en orden: base de datos → backend → frontend.', to: 's05', toLabel: '05 GitFlow' },
+  { icon: 'pyramid', title: 'Tres capas de tests en cada PR', text: 'Unitarios, integración contra un Postgres real y E2E con navegador.', to: 's04', toLabel: '04 Pirámide' },
+  { icon: 'servers', title: 'Dos ambientes reales', text: 'dev y prod en paralelo en mi propio servidor, desplegados de forma automática.', to: 's06', toLabel: '06 Homelab' },
+  { icon: 'shield', title: 'Seguridad desde el diseño', text: 'Cero secretos en el repo; la autorización se valida en la lógica de negocio.', to: 's02', toLabel: '02 Arquitectura' },
+  { icon: 'bot', title: 'IA con reglas, no en piloto automático', text: 'La IA propone; yo reviso, hago commit y abro el PR.', to: 's07', toLabel: '07 Agentes', highlight: true },
+] as const;
+
+const architecture = [
+  { name: 'Navegador', detail: 'usuario' },
+  { name: 'Nginx', detail: 'sirve la SPA de Angular · proxy de /api' },
+  { name: 'NestJS API', detail: 'JWT · roles + propiedad en el service', highlight: true },
+];
+
+const floors = [
+  { label: 'Docker · prod', cells: ['frontend · Nginx :80', 'backend · NestJS'], tone: 'app' },
+  { label: 'Docker · dev', cells: ['frontend · Nginx :8080', 'backend · NestJS'], tone: 'app' },
+  { label: 'Compartido', cells: ['MinIO · bucket dev / bucket prod · red lms-shared'], tone: 'data' },
+  { label: 'Postgres 16', cells: ['lms_dev', 'lms_prod'], tone: 'db' },
+];
+
+const agents = [
+  { name: 'database', can: 'schema y migraciones', cannot: 'services, frontend' },
+  { name: 'backend', can: 'apps/backend', cannot: 'frontend, docker, CI' },
+  { name: 'frontend', can: 'apps/frontend', cannot: 'backend, docker' },
+  { name: 'devops', can: 'docker/ y workflows', cannot: 'no ejecuta comandos' },
+  { name: 'reviewer', can: 'revisa todo el repo', cannot: 'solo lectura' },
+  { name: 'server-auditor', can: 'diagnostica el servidor', cannot: 'solo lectura' },
+];
+
+---
+
+<BaseLayout
+  title="LMS — caso de estudio · Javier Choque"
+  description="Cómo construí un LMS desde cero con prácticas de equipo profesional: CI/CD, GitFlow, tres capas de tests y dos ambientes en mi propio servidor."
+>
+  <!-- 00 HERO -->
+  <section class="container hero">
+    <a class="back mono" href={withBase('/#proyectos')}>← Inicio / Proyectos / LMS</a>
+    <h1>Un LMS construido como si fuera para una empresa.</h1>
+    <p class="lead">
+      NestJS + Angular + Postgres + MinIO, con CI/CD a dos ambientes en mi propio servidor. El producto es la excusa; el
+      proceso es el punto.
+    </p>
+    <Counters />
+  </section>
+
+  <!-- 01 POR QUÉ -->
+  <section id="s01" class="section container">
+    <SectionHeader number="01" kicker="Por qué lo construí" title="Un reto: nada de atajos" />
+    <div class="prose">
+      <p>
+        El LMS no nació de un cliente ni de una necesidad de negocio. Lo diseñé como un reto personal: construir una
+        aplicación desde cero <strong>como se hace en un equipo profesional</strong>, aunque el equipo fuera casi solo yo.
+      </p>
+      <p>
+        Elegí un LMS porque conozco el dominio desde la docencia: cursos, tareas, entregas y notas. Así podía enfocarme en
+        <em>cómo</em> construirlo y no tanto en <em>qué</em> construir.
+      </p>
+      <p>
+        La regla fue simple: <strong>nada de atajos</strong>. Si en una empresa un cambio pasa por un Pull Request, aquí
+        también, aunque yo mismo lo revise. Si allá hay tests que bloquean el merge, aquí también.
+      </p>
+    </div>
+    <h3 class="subhead">Las reglas que me impuse</h3>
+    <div class="rules">
+      {
+        rules.map((r) => (
+          <a class:list={['card', 'rule', { highlight: 'highlight' in r && r.highlight }]} href={`#${r.to}`}>
+            <span class="rule-icon">
+              <Icon name={r.icon} size={24} />
+            </span>
+            <span class="rule-title">{r.title}</span>
+            <span class="rule-text">{r.text}</span>
+            <span class="mono rule-to">→ {r.toLabel}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 02 ARQUITECTURA -->
+  <section id="s02" class="section container">
+    <SectionHeader
+      number="02"
+      kicker="Arquitectura"
+      title="Cómo se conectan las piezas"
+      lead="Angular servido por Nginx, una API NestJS que concentra la autorización, Postgres nativo y MinIO para archivos."
+    />
+    <div class="card arch">
+      {
+        architecture.map((box) => (
+          <>
+            <div class:list={['box', { highlight: box.highlight }]}>
+              <div class="box-name">{box.name}</div>
+              <div class="box-detail">{box.detail}</div>
+            </div>
+            <span class="arrow" aria-hidden="true">
+              <Icon name="arrow" size={28} />
+            </span>
+          </>
+        ))
+      }
+      <div class="stores">
+        <div class="box">
+          <div class="box-name">PostgreSQL 16</div>
+          <div class="box-detail">nativo · Prisma ORM</div>
+        </div>
+        <div class="box">
+          <div class="box-name">MinIO (S3)</div>
+          <div class="box-detail">adjuntos · URLs prefirmadas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 CI/CD -->
+  <section id="s03" class="section container">
+    <SectionHeader
+      number="03"
+      kicker="CI/CD"
+      title="La cadena de ensamblaje"
+      lead="Cada PR entra como un paquete y avanza por estaciones. Si una falla, el PR no se puede mergear. Prueba los botones."
+    />
+    <Pipeline />
+  </section>
+
+  <!-- 04 TESTING -->
+  <section id="s04" class="section container">
+    <SectionHeader
+      number="04"
+      kicker="Testing"
+      title="La pirámide viva"
+      lead="Muchos tests rápidos abajo, pocos y caros arriba. Elige un módulo para ver su pirámide real."
+    />
+    <TestPyramid />
+  </section>
+
+  <!-- 05 GITFLOW -->
+  <section id="s05" class="section container">
+    <SectionHeader
+      number="05"
+      kicker="GitFlow"
+      title="El metro de ramas"
+      lead="Los últimos PRs reales del proyecto. Cada rama sale de develop y vuelve por Pull Request; main recibe releases."
+    />
+    <GitMetro />
+  </section>
+
+  <!-- 06 HOMELAB -->
+  <section id="s06" class="section container">
+    <SectionHeader
+      number="06"
+      kicker="Infraestructura"
+      title="El homelab por dentro"
+      lead="Un solo servidor, dos ambientes aislados por base de datos y por bucket. Los ambientes viven en gitflow.cl (prod) y dev.gitflow.cl (dev) detrás de Cloudflare Tunnel + Access: solo el equipo de desarrollo puede entrar."
+    />
+    <div class="card building-wrap">
+      <div class="building">
+        <div class="roof">Techo · Cloudflare Tunnel + Access · activo</div>
+        {
+          floors.map((f) => (
+            <div class="floor">
+              <span class="mono floor-label">{f.label}</span>
+              <div class="cells">
+                {f.cells.map((c) => (
+                  <span class:list={['cell', f.tone]}>{c}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+        <div class="foundation">Cimientos · Ubuntu Server + runner self-hosted de GitHub Actions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 AGENTES -->
+  <section id="s07" class="section container">
+    <SectionHeader
+      number="07"
+      kicker="Claude Code"
+      title="El equipo de agentes"
+      lead="Uso Claude Code con agentes especializados por capa. Cada uno tiene límites claros, y ninguno hace commit ni push por su cuenta."
+    />
+    <div class="card agents">
+      {
+        agents.slice(0, 3).map((a) => (
+          <div class="agent">
+            <div class="mono agent-name">{a.name}</div>
+            <div class="can">✓ {a.can}</div>
+            <div class="cannot">✗ {a.cannot}</div>
+          </div>
+        ))
+      }
+      <div class="decider">
+        <strong>Yo decido</strong>
+        <span>IA propone → yo reviso → commit → PR → CI</span>
+      </div>
+      {
+        agents.slice(3).map((a) => (
+          <div class="agent">
+            <div class="mono agent-name">{a.name}</div>
+            <div class="can">✓ {a.can}</div>
+            <div class="cannot">✗ {a.cannot}</div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 08 PROBLEMAS -->
+  <section id="s08" class="section container">
+    <SectionHeader number="08" kicker="Problemas reales" title="Lo que se rompió y cómo lo arreglé" />
+    <div class="problems">
+      <article class="card problem">
+        <h3>Docker no llegaba a Postgres</h3>
+        <code class="error">no pg_hba.conf entry for host "172.x.x.x"</code>
+        <p>
+          <strong>Causa:</strong> un contenedor que le habla a la IP LAN de su propio host no hace hairpin NAT: Postgres lo
+          ve llegar con la IP interna del bridge de Docker, no con la de la LAN.
+        </p>
+        <p><strong>Fix:</strong> una regla en pg_hba.conf para el rango de las redes bridge de Docker.</p>
+      </article>
+      <!-- TODO: otro problema real -->
+      <div class="placeholder problem-ph">[OTRO PROBLEMA REAL]</div>
+    </div>
+  </section>
+
+  <!-- 09 EQUIPO -->
+  <section id="s09" class="section container">
+    <SectionHeader number="09" kicker="Equipo" title="Quién participó" />
+    <div class="team">
+      <div class="card member">
+        <span class="avatar">JC</span>
+        <div>
+          <div class="member-name">Javier Choque</div>
+          <div class="member-role">autor · arquitectura, backend, frontend e infraestructura</div>
+        </div>
+      </div>
+      <div class="card member">
+        <span class="avatar">YB</span>
+        <div>
+          <div class="member-name">Yomara Bernal</div>
+          <div class="member-role">colaboración · navegación compartida del frontend y tests E2E</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 ROADMAP -->
+  <section id="s10" class="section container">
+    <SectionHeader
+      number="10"
+      kicker="Roadmap"
+      title="Hacia dónde va"
+      lead="Base ya construida: autenticación, cursos y adjuntos. Lo que sigue está planificado como épicas e historias en GitHub; abre una épica para ver sus historias."
+    />
+    <Roadmap />
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: 56px;
+    padding-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .back {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    align-self: flex-start;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  h1 {
+    font-size: clamp(34px, 5.5vw, 52px);
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+  }
+  .lead {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 720px;
+  }
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 760px;
+    font-size: 18px;
+    color: var(--ink-2);
+  }
+  .subhead {
+    margin: 48px 0 20px;
+    font-size: 22px;
+  }
+
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: 14px;
+  }
+  .rule {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .rule:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .rule.highlight {
+    border: 2px solid var(--accent);
+  }
+  .rule-icon {
+    color: var(--accent);
+  }
+  .rule-title {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.35;
+  }
+  .rule-text {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .rule-to {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: auto;
+  }
+
+  .arch {
+    padding: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .box {
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    padding: 14px 18px;
+    min-width: 150px;
+    flex: 1 1 150px;
+  }
+  .box.highlight {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .box-name {
+    font-weight: 600;
+  }
+  .box-detail {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .arrow {
+    color: var(--ink);
+    display: inline-flex;
+  }
+  .stores {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 180px;
+  }
+
+  .building-wrap {
+    padding: 28px 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .building {
+    width: 100%;
+    max-width: 720px;
+  }
+  .roof {
+    border: 2px dashed var(--dashed);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .floor {
+    border: 2px solid var(--ink);
+    border-bottom: none;
+    padding: 12px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+  }
+  .floor-label {
+    flex: 0 0 120px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .cells {
+    flex: 1 1 260px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .cell {
+    flex: 1 1 140px;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  .cell.app {
+    background: var(--accent-soft);
+  }
+  .cell.data {
+    background: var(--data-soft);
+  }
+  .cell.db {
+    background: var(--hatch);
+  }
+  .foundation {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 0 0 10px 10px;
+    padding: 14px 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .agents {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    gap: 14px;
+  }
+  .agent {
+    border: 1.5px solid var(--ink);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+  }
+  .agent-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .can {
+    color: var(--ok);
+  }
+  .cannot {
+    color: var(--bad);
+  }
+  .decider {
+    grid-column: 1 / -1;
+    border: 2px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 12px;
+    text-align: center;
+  }
+  .decider span {
+    color: var(--ink-2);
+  }
+
+  .problems,
+  .team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 16px;
+  }
+  .problem {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .problem h3 {
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .error {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--terminal);
+    color: var(--terminal-val);
+    border-radius: 6px;
+    padding: 10px 12px;
+    overflow-wrap: anywhere;
+  }
+  .problem-ph {
+    min-height: 200px;
+  }
+  .member {
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .avatar {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .member-name {
+    font-weight: 700;
+  }
+  .member-role {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+</style>

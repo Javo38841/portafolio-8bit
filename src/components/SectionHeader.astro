@@ -1,0 +1,48 @@
+---
+interface Props {
+  number: string;
+  kicker: string;
+  title: string;
+  lead?: string;
+}
+
+const { number, kicker, title, lead } = Astro.props;
+---
+
+<header class="section-header">
+  <div class="label">
+    <span class="level">Nivel {number}</span>
+    <span>{kicker}</span>
+  </div>
+  <h2>{title}</h2>
+  {lead && <p class="lead">{lead}</p>}
+</header>
+
+<style>
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    line-height: 1.8;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .level {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 8px;
+  }
+  .lead {
+    font-size: 18px;
+    max-width: 760px;
+  }
+</style>

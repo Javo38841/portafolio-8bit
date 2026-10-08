@@ -1,0 +1,97 @@
+---
+// Copia el email al portapapeles al hacer click. Si el navegador no permite copiar,
+// el link sigue funcionando como mailto: normal.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  variant: 'icon' | 'button';
+}
+
+const { variant } = Astro.props;
+---
+
+<span class="copy-email">
+  {
+    variant === 'icon' ? (
+      <a href={`mailto:${site.email}`} class="icon" data-copy-email={site.email} aria-label={`Copiar email ${site.email}`}>
+        <Icon name="mail" />
+      </a>
+    ) : (
+      <a href={`mailto:${site.email}`} class="btn btn-primary" data-copy-email={site.email}>
+        <Icon name="mail" size={18} /> {site.email}
+      </a>
+    )
+  }
+  <span class="toast" role="status" aria-live="polite"></span>
+</span>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-copy-email]').forEach((link) => {
+    const toast = link.parentElement?.querySelector<HTMLElement>('.toast');
+    let timer: number | undefined;
+
+    link.addEventListener('click', async (event) => {
+      if (!navigator.clipboard) return; // sin API de portapapeles: se abre el mailto
+      event.preventDefault();
+      try {
+        await navigator.clipboard.writeText(link.dataset.copyEmail ?? '');
+        if (toast) {
+          toast.textContent = 'Email copiado ✓';
+          toast.dataset.visible = 'true';
+          clearTimeout(timer);
+          timer = window.setTimeout(() => {
+            toast.dataset.visible = 'false';
+            toast.textContent = '';
+          }, 2000);
+        }
+      } catch {
+        window.location.href = link.href;
+      }
+    });
+  });
+</script>
+
+<style>
+  .copy-email {
+    position: relative;
+    display: inline-flex;
+  }
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--ink);
+    border-radius: 6px;
+  }
+  .icon:hover {
+    color: var(--accent);
+    background: var(--hatch);
+  }
+  .btn {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .toast {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 6px);
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1;
+  }
+  .toast[data-visible='true'] {
+    opacity: 1;
+  }
+</style>

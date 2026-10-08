@@ -1,0 +1,279 @@
+---
+import stats from '../../data/stats.json';
+
+// Estaciones del CI (ci.yml del monorepo) en el orden en que un PR las atraviesa.
+const stations = [
+  { id: 'lint', name: 'Lint', detail: 'ESLint en el backend y ng lint en el frontend: errores comunes y estilo.' },
+  { id: 'format', name: 'Formato', detail: 'Prettier --check: el código entra formateado o no entra.' },
+  { id: 'types', name: 'Tipos', detail: 'Type-check estricto de TypeScript en ambas apps.' },
+  { id: 'unit', name: 'Unit', detail: 'Jest y ng test con todo mockeado: Prisma, S3 y HttpClient.' },
+  { id: 'integration', name: 'Integración', detail: 'La API contra un Postgres real y efímero, con las migraciones aplicadas.' },
+  { id: 'build', name: 'Build', detail: 'Build de NestJS y build de producción de Angular.' },
+  { id: 'e2e', name: 'E2E', detail: 'Playwright con backend y frontend reales corriendo juntos y la base sembrada.' },
+];
+const failAt = 3; // "Simular fallo" rompe la estación Unit
+
+const cdSteps = ['detectar ambiente', 'sincronizar', 'migrar BD', 'MinIO', 'build y levantar'];
+const jobs = stats.ci.jobs.map((j) => j.name).join(' · ');
+---
+
+<div
+  class="card pipeline"
+  data-pipeline
+  data-fail-at={failAt}
+  data-details={JSON.stringify(stations.map((s) => s.detail))}
+>
+  <div class="controls">
+    <button type="button" class="btn btn-primary" data-run>▶ Start</button>
+    <button type="button" class="btn" data-fail>Simular fallo</button>
+  </div>
+
+  <div class="line">
+    <div class="package mono" data-package>PR</div>
+    <ol class="stations">
+      {
+        stations.map((s, i) => (
+          <li>
+            <button type="button" class="station" data-station={i} aria-pressed="false">
+              <span class="dot" aria-hidden="true" />
+              {s.name}
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+  <div class="belt" aria-hidden="true"></div>
+
+  <p class="detail" data-detail aria-live="polite">Haz click en una estación para ver qué valida.</p>
+
+  <div class="mono jobs">CI · {stats.ci.jobs.length} jobs en paralelo: {jobs}</div>
+
+  <div class="targets" data-targets>
+    <div class="target">
+      <div class="mono branch">merge → develop</div>
+      <div class="env">Stack dev · :8080 · lms_dev</div>
+    </div>
+    <div class="target">
+      <div class="mono branch">merge → main</div>
+      <div class="env">Stack prod · :80 · lms_prod</div>
+    </div>
+  </div>
+
+  <ol class="cd">
+    <li class="mono label">CD:</li>
+    {
+      cdSteps.map((s, i) => (
+        <>
+          {i > 0 && <li class="arrow" aria-hidden="true">→</li>}
+          <li class="chip">{s}</li>
+        </>
+      ))
+    }
+  </ol>
+</div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-pipeline]').forEach((root) => {
+    const stations = [...root.querySelectorAll<HTMLButtonElement>('[data-station]')];
+    const detail = root.querySelector<HTMLElement>('[data-detail]')!;
+    const details: string[] = JSON.parse(root.dataset.details ?? '[]');
+    const pkg = root.querySelector<HTMLElement>('[data-package]')!;
+    const targets = root.querySelector<HTMLElement>('[data-targets]')!;
+    const runBtn = root.querySelector<HTMLButtonElement>('[data-run]')!;
+    const failBtn = root.querySelector<HTMLButtonElement>('[data-fail]')!;
+    const failAt = Number(root.dataset.failAt);
+    let timers: number[] = [];
+
+    const reset = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      stations.forEach((s) => (s.dataset.state = ''));
+      pkg.dataset.state = '';
+      targets.dataset.state = '';
+    };
+
+    const run = (fail: boolean) => {
+      reset();
+      const last = fail ? failAt : stations.length - 1;
+      const step = reduce ? 0 : 350;
+      for (let i = 0; i <= last; i++) {
+        timers.push(
+          window.setTimeout(() => {
+            const failed = fail && i === failAt;
+            stations[i].dataset.state = failed ? 'fail' : 'ok';
+            if (failed) {
+              pkg.dataset.state = 'fail';
+              targets.dataset.state = 'blocked';
+              detail.textContent = 'GAME OVER · Fallaron los tests unitarios: el PR queda bloqueado y no se puede mergear.';
+            } else if (i === last) {
+              pkg.dataset.state = 'ok';
+              targets.dataset.state = 'ok';
+              detail.textContent = '★ STAGE CLEAR! · Todas las estaciones en verde: el PR se puede mergear y el CD despliega.';
+            }
+          }, step * (i + 1)),
+        );
+      }
+    };
+
+    runBtn.addEventListener('click', () => run(false));
+    failBtn.addEventListener('click', () => run(true));
+
+    stations.forEach((s, i) =>
+      s.addEventListener('click', () => {
+        stations.forEach((o) => o.setAttribute('aria-pressed', String(o === s)));
+        detail.textContent = `${s.textContent?.trim()}: ${details[i]}`;
+      }),
+    );
+  });
+</script>
+
+<style>
+  .pipeline {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .line {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .package {
+    flex: 0 0 auto;
+    width: 72px;
+    border: 2px solid var(--data);
+    background: var(--data-soft);
+    color: var(--data);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+  .package[data-state='ok'] {
+    border-color: var(--ok);
+    color: var(--ok);
+  }
+  .package[data-state='fail'] {
+    border-color: var(--bad);
+    color: var(--bad);
+  }
+  .stations {
+    flex: 1 1 auto;
+    min-width: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: 8px;
+  }
+  .station {
+    width: 100%;
+    min-height: 64px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .station:hover,
+  .station[aria-pressed='true'] {
+    background: var(--accent-soft);
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.2s;
+  }
+  .station[data-state='ok'] .dot {
+    background: var(--ok);
+  }
+  .station[data-state='fail'] {
+    border-color: var(--bad);
+  }
+  .station[data-state='fail'] .dot {
+    background: var(--bad);
+  }
+  .belt {
+    height: 16px;
+    border-radius: 8px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 16px, var(--line) 16px 32px);
+    opacity: 0.85;
+  }
+  .detail {
+    min-height: 1.6em;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .jobs {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .targets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: 12px;
+    transition: opacity 0.2s;
+  }
+  .targets[data-state='blocked'] {
+    opacity: 0.35;
+  }
+  .target {
+    border: 1.5px dashed var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .targets[data-state='ok'] .target {
+    border-style: solid;
+    background: var(--accent-soft);
+  }
+  .branch {
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .env {
+    font-weight: 600;
+  }
+  .cd {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .cd .label {
+    color: var(--muted);
+  }
+  .chip {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .arrow {
+    color: var(--muted);
+  }
+</style>

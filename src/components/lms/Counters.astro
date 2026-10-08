@@ -1,0 +1,78 @@
+---
+import stats from '../../data/stats.json';
+
+const t = stats.tests.todo;
+const counters = [
+  { value: t.unit + t.integration + t.e2e, label: 'tests en 3 capas' },
+  { value: stats.prsMerged, label: 'pull requests mergeados' },
+  { value: stats.environments, label: 'ambientes en paralelo' },
+  { value: stats.agents, label: 'agentes de IA con reglas' },
+];
+---
+
+<div class="counters">
+  {
+    counters.map((c) => (
+      <div class="card counter">
+        <div class="value mono" data-count={c.value}>
+          {c.value}
+        </div>
+        <div class="label">{c.label}</div>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  // Anima los contadores de 0 al valor real cuando entran en pantalla.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll<HTMLElement>('[data-count]');
+
+  if (!reduce && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          observer.unobserve(el);
+          const target = Number(el.dataset.count);
+          const start = performance.now();
+          const duration = 900;
+          const tick = (now: number) => {
+            const p = Math.min((now - start) / duration, 1);
+            el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          el.textContent = '0';
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    els.forEach((el) => observer.observe(el));
+  }
+</script>
+
+<style>
+  .counters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 16px;
+  }
+  .counter {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .value {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--data);
+  }
+  .label {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+</style>

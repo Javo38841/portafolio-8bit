@@ -1,0 +1,449 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Icon from '../components/Icon.astro';
+import CopyEmail from '../components/CopyEmail.astro';
+import ServerIllustration from '../components/home/ServerIllustration.astro';
+import { site, withBase } from '../data/site';
+
+// TODO: todos los textos de esta página son un borrador a partir de tus CVs; reescríbelos con tu voz.
+
+const now = [
+  'Desarrollo módulos de un sistema integral de gestión logística de vehículos: ubicación de la flota en un mapa y un control de llaves que registra en qué gaveta numerada (1 a 300) está la llave de cada vehículo. Es un MVP que ya usan clientes internos: bodegueros, jefes de logística y el área comercial, que solicita llaves para exhibición.',
+  'Desarrollo y mantengo un sistema interno con NestJS y Angular, desplegado en la nube con GitFlow y CI/CD.',
+  'Puse en producción una API que integra un ERP con el CRM de un proveedor externo.',
+  'Hago análisis de causa raíz (RCA) de fallas en producción y gestiono incidencias con Kanban y Lean.',
+];
+
+const past = [
+  {
+    org: 'Municipalidad de Alto Hospicio',
+    role: 'Desarrollador Full Stack (práctica profesional)',
+    when: 'Ene – Mar 2025',
+    text: 'Sistema de gestión de personas: API REST con Laravel y frontend multiplataforma con Flutter.',
+  },
+  {
+    org: 'Corporación Educacional Marcela Paz',
+    role: 'Desarrollador Front-end (práctica) y coordinador del equipo',
+    when: 'Dic 2023 – Feb 2024',
+    text: 'Frontend del sistema de planificación escolar con Spring Boot y Thymeleaf; coordiné al equipo y estandaricé el uso de Git.',
+  },
+];
+
+const projects = [
+  {
+    title: 'Homelab y pipelines CI/CD',
+    meta: 'Proyecto personal · 2026',
+    text: 'Servidor Ubuntu propio con runners self-hosted de GitHub Actions y aplicaciones empaquetadas en Docker.',
+    tags: ['Linux', 'Docker', 'GitHub Actions'],
+  },
+  {
+    title: 'BeatMap',
+    meta: 'Proyecto de título · UTFSM · 2025',
+    text: 'Frontend en React de una plataforma que conecta artistas, espacios y público en un mapa interactivo. Seleccionado para la Feria de Software USM 2025.',
+    tags: ['React', 'Scrumban'],
+  },
+];
+
+const workshops = [
+  {
+    title: 'Git y GitFlow',
+    text: 'Taller de control de versiones desde cero, con slides propias en LaTeX y repositorios de práctica.',
+    items: [
+      'Introducción al control de versiones y la terminal',
+      'El repositorio local y los tres estados de Git',
+      'Commits e historial: la máquina del tiempo',
+    ],
+  },
+  {
+    title: 'Java',
+    text: 'Syllabus, unidades temáticas y laboratorios prácticos de programación orientada a objetos.',
+    items: [],
+  },
+  {
+    title: 'SQL Server',
+    text: 'Consultas, modelado y buenas prácticas sobre bases de datos relacionales.',
+    items: [],
+  },
+  {
+    title: 'NestJS y Angular',
+    text: 'Backend y frontend con el mismo stack que uso en producción.',
+    items: [],
+  },
+];
+
+const university = [
+  {
+    title: 'Talleres Prácticos de Programación',
+    text: 'Postulé y ejecuté de principio a fin un fondo concursable de la UTFSM (ID 393, $1.200.000 CLP).',
+  },
+  {
+    title: 'Ayudante y Monitor de Inclusión',
+    text: 'UTFSM, 2024–2025: programación orientada a objetos en Java y Python, patrón MVC y diagramas UML.',
+  },
+];
+---
+
+<BaseLayout
+  title={`${site.name} — ${site.role}`}
+  description="Ingeniero en Informática en Tarapacá, Chile. Construyo software con prácticas de equipo profesional y enseño a hacerlo."
+>
+  <Hero />
+
+  <section id="sobre-mi" class="section container">
+    <SectionHeader number="02" kicker="Sobre mí" title="Del norte a Concepción, y de vuelta" />
+    <div class="about">
+    <div class="prose dialog">
+      <p>
+        Vivo en Alto Hospicio, en la región de Tarapacá. Estudié Ingeniería en Informática en la Universidad Técnica
+        Federico Santa María, en Concepción, y hoy trabajo en Iquique.
+      </p>
+      <p>
+        Me mueven dos cosas: automatizar lo que se repite y enseñar lo que aprendo. Fui ayudante y monitor de inclusión en
+        la universidad, postulé y ejecuté un fondo concursable para talleres de programación, y hoy diseño y enseño
+        talleres de forma particular.
+      </p>
+      <p>
+        Fuera del trabajo administro mi propio servidor: un homelab con Ubuntu Server, Docker y GitHub Actions, donde
+        corre el proyecto del que más aprendí.
+      </p>
+    </div>
+    <div class="homelab">
+      <figure class="card homelab-svg">
+        <ServerIllustration />
+        <figcaption>Mi servidor es un notebook</figcaption>
+      </figure>
+      <figure class="homelab-photo">
+        <img
+          src={withBase(site.homelabPhoto.src)}
+          alt={site.homelabPhoto.alt}
+          width="96"
+          height="128"
+          loading="lazy"
+          decoding="async"
+        />
+        {site.homelabPhoto.isReference && <figcaption>Imagen referencial</figcaption>}
+      </figure>
+    </div>
+    </div>
+  </section>
+
+  <section id="hoy" class="section container">
+    <SectionHeader
+      number="03"
+      kicker="Qué hago hoy"
+      title="Analista de Soporte TI y Software"
+      lead="Intermex S.A. · Iquique (ZOFRI) · desde julio de 2026"
+    />
+    <ul class="now">
+      {now.map((n) => <li>{n}</li>)}
+    </ul>
+    <div class="past">
+      {
+        past.map((p) => (
+          <article class="card past-item">
+            <div class="past-head">
+              <h3>{p.org}</h3>
+              <span class="mono when">{p.when}</span>
+            </div>
+            <div class="role">{p.role}</div>
+            <p>{p.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="proyectos" class="section container">
+    <SectionHeader number="04" kicker="Cosas que construí" title="Proyectos" />
+    <a class="featured card" href={withBase('/proyectos/lms')}>
+      <div class="featured-copy">
+        <div class="kicker">Proyecto destacado · caso de estudio</div>
+        <h3>LMS — una aplicación construida como si fuera para una empresa</h3>
+        <p>
+          NestJS + Angular + Postgres + MinIO, con CI/CD a dos ambientes en mi propio servidor, GitFlow y tres capas de
+          tests. Mira cómo está construido por dentro.
+        </p>
+        <span class="featured-cta">Ver el caso de estudio <Icon name="arrow" size={18} /></span>
+      </div>
+    </a>
+    <div class="projects">
+      {
+        projects.map((p) => (
+          <article class="card project">
+            <div class="mono meta">{p.meta}</div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+            <ul class="tags">
+              {p.tags.map((t) => (
+                <li class="mono">{t}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="enseno" class="section container">
+    <SectionHeader
+      number="05"
+      kicker="Enseño"
+      title="Enseñar es parte de cómo aprendo"
+      lead="Diseño talleres y los enseño de forma particular: preparo el programa, el material y los ejercicios."
+    />
+    <div class="teaching">
+      {
+        workshops.map((w) => (
+          <article class="card teach">
+            <h3>{w.title}</h3>
+            <p>{w.text}</p>
+            {w.items.length > 0 && (
+              <ol class="classes">
+                {w.items.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ol>
+            )}
+          </article>
+        ))
+      }
+    </div>
+    <h3 class="subhead">En la universidad</h3>
+    <div class="teaching">
+      {
+        university.map((u) => (
+          <article class="card teach">
+            <h3>{u.title}</h3>
+            <p>{u.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="fuera" class="section container">
+    <SectionHeader number="06" kicker="Fuera del código" title="Música, cine y cultura" />
+    <div class="prose">
+      <p>
+        Me gustan los centros culturales, el cine y las tocatas de música independiente. No es casualidad que mi proyecto
+        de título, BeatMap, fuera un mapa para conectar artistas, espacios y público.
+      </p>
+    </div>
+  </section>
+
+  <section id="contacto" class="section container">
+    <SectionHeader number="07" kicker="Contacto" title="Conversemos" />
+    <div class="contact">
+      <CopyEmail variant="button" />
+      <a class="btn" href={site.github}><Icon name="github" size={18} /> GitHub</a>
+      {
+        site.linkedin && (
+          <a class="btn" href={site.linkedin}>
+            <Icon name="linkedin" size={18} /> LinkedIn
+          </a>
+        )
+      }
+      {
+        site.cvPdf && (
+          <a class="btn" href={withBase(site.cvPdf)} download>
+            <Icon name="download" size={18} /> CV (PDF)
+          </a>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+    font-size: 18px;
+    color: var(--ink-2);
+  }
+  .now {
+    margin: 0 0 32px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 820px;
+    color: var(--ink-2);
+  }
+  .past,
+  .projects,
+  .teaching {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: 16px;
+  }
+  .past-item,
+  .project,
+  .teach {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .past-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 12px;
+    align-items: baseline;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .when,
+  .meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .role {
+    font-style: italic;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .past-item p,
+  .project p,
+  .teach p {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .featured {
+    display: block;
+    padding: 28px;
+    margin-bottom: 16px;
+    border: 2px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .featured:hover {
+    color: var(--ink);
+  }
+  .featured-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 760px;
+  }
+  .featured h3 {
+    font-size: clamp(22px, 3vw, 28px);
+  }
+  .featured p {
+    color: var(--ink-2);
+  }
+  .featured-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .featured:hover .featured-cta {
+    color: var(--accent-hover);
+  }
+  .tags {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tags li {
+    font-size: 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+    color: var(--muted);
+  }
+  .classes {
+    margin: 4px 0 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: var(--ink-2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .subhead {
+    margin: 40px 0 16px;
+    font-size: 20px;
+  }
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .homelab {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 340px));
+    gap: 16px;
+  }
+  figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .homelab-svg {
+    padding: 12px;
+  }
+  .homelab-photo img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    display: block;
+    box-shadow:
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink),
+      0 -4px 0 0 var(--ink),
+      0 4px 0 0 var(--ink);
+  }
+  .dialog {
+    position: relative;
+    background: var(--surface);
+    padding: 28px 28px 40px;
+    max-width: 820px;
+    box-shadow:
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink),
+      0 -4px 0 0 var(--ink),
+      0 4px 0 0 var(--ink),
+      inset 0 0 0 4px var(--surface),
+      inset 0 0 0 8px var(--ink);
+  }
+  .dialog::after {
+    content: '▼';
+    position: absolute;
+    right: 20px;
+    bottom: 12px;
+    font-size: 14px;
+    animation: blink 1s steps(1) infinite;
+  }
+  figcaption {
+    font-family: var(--font-display);
+    font-size: 9px;
+    line-height: 1.8;
+    color: var(--muted);
+    text-align: center;
+  }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .contact .btn {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+</style>
