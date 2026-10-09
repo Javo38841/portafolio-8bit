@@ -122,7 +122,8 @@ h3 {
   letter-spacing: 0;
 }
 
-/* Press Start 2P es muy ancha: tamaños propios que ganan a los de cada componente. */
+/* Press Start 2P es muy ancha y no trae mayúsculas con tilde: las etiquetas en
+   mayúsculas (.kicker, etiquetas de sección) usan Pixelify Sans. */
 html body h1 {
   font-size: clamp(20px, 3.4vw, 32px);
   line-height: 1.5;
@@ -160,9 +161,11 @@ p {
 }
 
 .kicker {
-  font-family: var(--font-display);
-  font-size: 11px;
-  line-height: 1.8;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
   color: var(--muted);
   text-transform: uppercase;
 }

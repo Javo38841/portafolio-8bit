@@ -4,6 +4,10 @@ import Hero from '../components/home/Hero.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import Icon from '../components/Icon.astro';
 import CopyEmail from '../components/CopyEmail.astro';
+import BookInventory from '../components/home/BookInventory.astro';
+import books from '../data/books.json';
+import CassetteCarousel from '../components/home/CassetteCarousel.astro';
+import music from '../data/music.json';
 import ServerIllustration from '../components/home/ServerIllustration.astro';
 import { site, withBase } from '../data/site';
 
@@ -223,18 +227,34 @@ const university = [
     </div>
   </section>
 
+  <section id="libros" class="section container">
+    <SectionHeader
+      number="06"
+      kicker="Libros que me formaron"
+      title="Lo que leo para trabajar mejor"
+      lead="Libros que cambiaron cómo trabajo. Elige un ítem para ver dónde lo aplico."
+    />
+    <BookInventory books={books.formation} label="Inventario · libros de trabajo" interactive />
+  </section>
+
   <section id="fuera" class="section container">
-    <SectionHeader number="06" kicker="Fuera del código" title="Música, cine y cultura" />
+    <SectionHeader number="07" kicker="Fuera del código" title="Música, cine, cultura y libros" />
     <div class="prose">
       <p>
         Me gustan los centros culturales, el cine y las tocatas de música independiente. No es casualidad que mi proyecto
         de título, BeatMap, fuera un mapa para conectar artistas, espacios y público.
       </p>
     </div>
+    <div class="music">
+      <CassetteCarousel artists={music.artists} label="Mis 50 artistas favoritos" />
+    </div>
+    <div class="favorites">
+      <BookInventory books={books.favorites} label="Inventario personal · favoritos" />
+    </div>
   </section>
 
   <section id="contacto" class="section container">
-    <SectionHeader number="07" kicker="Contacto" title="Conversemos" />
+    <SectionHeader number="08" kicker="Contacto" title="Conversemos" />
     <div class="contact">
       <CopyEmail variant="button" />
       <a class="btn" href={site.github}><Icon name="github" size={18} /> GitHub</a>
@@ -436,6 +456,10 @@ const university = [
     line-height: 1.8;
     color: var(--muted);
     text-align: center;
+  }
+  .music,
+  .favorites {
+    margin-top: 40px;
   }
   .contact {
     display: flex;

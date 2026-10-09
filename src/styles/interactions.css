@@ -1,0 +1,92 @@
+/* Pistas de interacción de la edición 8-bit: dejan claro qué se puede tocar.
+   Se carga después de los estilos de cada componente; el prefijo :root sube la
+   especificidad para ganarles sin !important. Con reduced-motion, global.css
+   apaga todas las animaciones y quedan solo los cambios de color y posición. */
+
+/* 1. Al pasar el mouse o enfocar: el elemento "se levanta" y al presionar se hunde. */
+:root :is(a.card, button.slot, button.station, .selector button, a.tape) {
+  cursor: pointer;
+  transition: transform 0.1s steps(2);
+}
+:root :is(a.card, button.slot, button.station, .selector button, a.tape):is(:hover, :focus-visible) {
+  transform: translate(-4px, -4px);
+  box-shadow:
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink),
+    10px 10px 0 0 var(--ink);
+}
+:root :is(a.card, button.slot, button.station, .selector button, a.tape):active {
+  transform: translate(0, 0);
+  box-shadow:
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink);
+}
+
+/* Cursor de menú de RPG en las tarjetas que son links. */
+:root a.rule:is(:hover, :focus-visible) .rule-title::before,
+:root a.featured:is(:hover, :focus-visible) .featured-cta::before {
+  content: '▶ ';
+}
+
+/* 2. Pista de inactividad: el primer elemento parpadea hasta que se interactúa. */
+@keyframes hint-ring {
+  50% {
+    outline: 4px dashed var(--data);
+    outline-offset: 6px;
+  }
+}
+:root .slots:not(:has([aria-pressed='true'])) li:first-child button.slot,
+:root .roadmap:not(:has(details[open])) .epic:first-child summary,
+:root .pipeline:not(:has([data-state='ok'], [data-state='fail'])) [data-run] {
+  animation: hint-ring 1.2s steps(1) infinite;
+}
+
+/* Épicas del roadmap: el resumen se invierte al pasar el mouse. */
+:root .epic summary:is(:hover, :focus-visible) {
+  background: var(--ink);
+}
+:root .epic summary:is(:hover, :focus-visible) * ,
+:root .epic summary:is(:hover, :focus-visible)::after {
+  color: var(--paper);
+}
+
+/* 4. La regla destacada ("IA con reglas") va invertida y con sombra de cartucho. */
+:root a.rule.highlight {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow:
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink),
+    8px 8px 0 0 var(--data);
+}
+:root a.rule.highlight :is(.rule-icon, .rule-text, .rule-to) {
+  color: var(--paper);
+}
+:root a.rule.highlight:is(:hover, :focus-visible) {
+  color: var(--paper);
+  box-shadow:
+    -4px 0 0 0 var(--ink),
+    4px 0 0 0 var(--ink),
+    0 -4px 0 0 var(--ink),
+    0 4px 0 0 var(--ink),
+    12px 12px 0 0 var(--data);
+}
+
+/* 5. El botón A de la consola titila invitando a presionarlo. */
+@keyframes press-a {
+  50% {
+    background: #c23a7a;
+  }
+}
+:root .key.a {
+  animation: press-a 1s steps(1) infinite;
+}
+:root .key.a:is(:hover, :focus-visible) {
+  animation: none;
+}
