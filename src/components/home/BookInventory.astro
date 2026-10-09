@@ -1,0 +1,221 @@
+---
+// Libros como ítems de un inventario de RPG. Con `interactive`, elegir un ítem abre un cuadro de diálogo.
+interface Book {
+  title: string;
+  author: string;
+  applied?: string;
+}
+
+interface Props {
+  books: Book[];
+  label: string;
+  interactive?: boolean;
+}
+
+const { books, label, interactive = false } = Astro.props;
+---
+
+<div class="inventory" data-inventory={interactive ? JSON.stringify(books) : undefined}>
+  <div class="bar">
+    <span>{label}</span>
+    <span>{books.length}/{books.length}</span>
+  </div>
+  <ul class="slots" aria-label={label}>
+    {
+      books.map((b, i) => (
+        <li>
+          {interactive ? (
+            <button type="button" class="slot" data-i={i} aria-pressed="false">
+              <svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" class="icon">
+                <rect x="3" y="1" width="10" height="14" class="cover" />
+                <rect x="3" y="1" width="2" height="14" class="spine" />
+                <rect x="12" y="2" width="1" height="12" class="pages" />
+                <rect x="6" y="4" width="5" height="3" class="pages" />
+              </svg>
+              <span class="name">{b.title}</span>
+            </button>
+          ) : (
+            <div class="slot">
+              <svg viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" class="icon">
+                <rect x="3" y="1" width="10" height="14" class="cover" />
+                <rect x="3" y="1" width="2" height="14" class="spine" />
+                <rect x="12" y="2" width="1" height="12" class="pages" />
+                <rect x="6" y="4" width="5" height="3" class="pages" />
+              </svg>
+              <span class="name">{b.title}</span>
+              {b.author && <span class="author">{b.author}</span>}
+            </div>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    interactive && (
+      <div class="dialog" aria-live="polite">
+        <p data-empty>Elige un ítem del inventario.</p>
+        <div data-fields hidden>
+          <p class="got">
+            ¡Obtuviste <span data-field="title" />!
+          </p>
+          <p>
+            AUTOR: <span data-field="author" />
+          </p>
+          <p>
+            EFECTO: <span data-field="applied" />
+          </p>
+        </div>
+        <span class="next blink" aria-hidden="true">
+          ▼
+        </span>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  type Book = { title: string; author: string; applied?: string };
+
+  document.querySelectorAll<HTMLElement>('[data-inventory]').forEach((root) => {
+    const books: Book[] = JSON.parse(root.dataset.inventory ?? '[]');
+    const slots = [...root.querySelectorAll<HTMLButtonElement>('button.slot')];
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const fields = root.querySelector<HTMLElement>('[data-fields]')!;
+    const field = (name: string) => root.querySelector<HTMLElement>(`[data-field="${name}"]`)!;
+
+    slots.forEach((slot) =>
+      slot.addEventListener('click', () => {
+        const book = books[Number(slot.dataset.i)];
+        slots.forEach((s) => s.setAttribute('aria-pressed', String(s === slot)));
+        field('title').textContent = book.title.toUpperCase();
+        field('author').textContent = book.author;
+        field('applied').textContent = book.applied ?? '';
+        empty.hidden = true;
+        fields.hidden = false;
+      }),
+    );
+  });
+</script>
+
+<style>
+  .inventory {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+  .slots {
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+    gap: 16px;
+  }
+  .slot {
+    width: 100%;
+    height: 100%;
+    min-height: 132px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    color: var(--ink);
+    background: var(--surface);
+    border: none;
+    font-family: var(--font-sans);
+    box-shadow:
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink),
+      0 -4px 0 0 var(--ink),
+      0 4px 0 0 var(--ink);
+  }
+  button.slot {
+    cursor: pointer;
+  }
+  button.slot:hover {
+    background: var(--hatch);
+  }
+  button.slot[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  button.slot[aria-pressed='true'] .name::before {
+    content: '▶ ';
+  }
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+  .cover {
+    fill: currentColor;
+  }
+  .spine {
+    fill: var(--line);
+  }
+  .pages {
+    fill: var(--surface);
+  }
+  button.slot[aria-pressed='true'] .pages {
+    fill: var(--ink);
+  }
+  .name {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  .author {
+    font-size: 14px;
+  }
+
+  .dialog {
+    position: relative;
+    min-height: 150px;
+    padding: 24px 28px 36px;
+    background: var(--surface);
+    font-size: 18px;
+    box-shadow:
+      -4px 0 0 0 var(--ink),
+      4px 0 0 0 var(--ink),
+      0 -4px 0 0 var(--ink),
+      0 4px 0 0 var(--ink),
+      inset 0 0 0 4px var(--surface),
+      inset 0 0 0 8px var(--ink);
+  }
+  .dialog [data-fields] {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .dialog [data-fields][hidden] {
+    display: none;
+  }
+  .got {
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .next {
+    position: absolute;
+    right: 20px;
+    bottom: 12px;
+    font-size: 14px;
+  }
+</style>

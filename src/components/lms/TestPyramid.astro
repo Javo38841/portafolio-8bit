@@ -108,44 +108,57 @@ const initial = modules[0];
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 14px;
   }
+  /* Cada nivel con un tono distinto de la paleta (en 8-bit acento y tinta coinciden). */
   .tier {
-    border-radius: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    gap: 6px;
     text-align: center;
-    padding: 8px;
+    padding: 12px 8px;
+    box-shadow:
+      -4px 0 0 0 var(--gb-0),
+      4px 0 0 0 var(--gb-0),
+      0 -4px 0 0 var(--gb-0),
+      0 4px 0 0 var(--gb-0);
+  }
+  .tier .n {
+    font-family: var(--font-display);
+    line-height: 1;
   }
   .tier .t {
-    font-size: 12px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
   .e2e {
-    width: 34%;
-    min-height: 56px;
-    background: var(--data);
-    color: var(--paper);
+    width: 40%;
+    min-height: 72px;
+    background: var(--cart);
+    color: #f4eef2;
   }
   .e2e .n {
-    font-size: 22px;
+    font-size: 20px;
   }
   .integration {
-    width: 66%;
-    min-height: 64px;
-    background: var(--accent);
-    color: var(--on-accent);
+    width: 70%;
+    min-height: 80px;
+    background: var(--gb-1);
+    color: var(--gb-3);
   }
   .integration .n {
-    font-size: 24px;
+    font-size: 22px;
   }
   .unit {
     width: 100%;
-    min-height: 72px;
-    background: var(--ink);
-    color: var(--paper);
+    min-height: 88px;
+    background: var(--gb-3);
+    color: var(--gb-0);
   }
   .unit .n {
     font-size: 26px;
