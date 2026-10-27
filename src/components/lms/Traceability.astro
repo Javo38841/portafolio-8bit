@@ -1,0 +1,358 @@
+---
+// Actividades del perfil Entrada de ISO/IEC 29110 y el documento que cubre cada una
+// (docs/iso29110/index.md del monorepo).
+const processes = [
+  {
+    id: 'PM',
+    name: 'Gestión del proyecto',
+    question: '¿Vamos bien?',
+    activities: [
+      { id: 'PM.1', name: 'Planificación', doc: 'Plan de proyecto', status: 'hecho' },
+      { id: 'PM.2', name: 'Ejecución', doc: 'Tablero + matriz de trazabilidad', status: 'en uso' },
+      { id: 'PM.3', name: 'Evaluación y control', doc: 'Acta del viernes con demo y aceptación', status: 'en uso' },
+      { id: 'PM.4', name: 'Cierre', doc: 'Acta de aceptación y cierre', status: 'plantilla' },
+    ],
+  },
+  {
+    id: 'SI',
+    name: 'Implementación del software',
+    question: '¿Construimos lo correcto, y bien?',
+    activities: [
+      { id: 'SI.1', name: 'Inicio', doc: 'Inicio de la implementación', status: 'hecho' },
+      { id: 'SI.2', name: 'Requisitos', doc: 'Especificación RF / RNF v1.0', status: 'hecho' },
+      { id: 'SI.3', name: 'Diseño', doc: 'Arquitectura, 7 ADRs y casos de prueba', status: 'hecho' },
+      { id: 'SI.4', name: 'Construcción', doc: 'Código y tests unitarios por PR', status: 'en curso' },
+      { id: 'SI.5', name: 'Integración y pruebas', doc: 'Reporte de pruebas y registro de defectos', status: 'en uso' },
+      { id: 'SI.6', name: 'Entrega', doc: 'Manual de operación', status: 'borrador' },
+    ],
+  },
+];
+
+// La cadena real de RF-02: cada eslabón cita el artefacto tal como está en el repo.
+const links = [
+  {
+    name: 'Requisito',
+    id: 'RF-02',
+    where: 'docs/requisitos/especificacion.md',
+    sample: '| RF-02 | Iniciar sesión y elegir organización | M | #31 | E2 | Fase 0 |',
+  },
+  {
+    name: 'Historia',
+    id: '#31',
+    where: 'issue de GitHub',
+    sample: 'Requisito: RF-02 · criterios de aceptación = casos CP-02-01 … CP-02-13',
+  },
+  {
+    name: 'Test',
+    id: 'CP-02-05',
+    where: 'apps/backend/test/login-organizations.e2e-spec.ts',
+    sample: "it('CP-02-05: credenciales inválidas devuelven 401 con el mismo mensaje exista o no el email')",
+  },
+  {
+    name: 'CI',
+    id: '#74 · #77 · #78',
+    where: 'PRs con Refs #31',
+    sample: 'Backend ✓ · Frontend ✓ · E2E ✓ — la ejecución del CI es la evidencia',
+  },
+  {
+    name: 'Demo',
+    id: 'viernes',
+    where: 'reunión semanal',
+    sample: 'El Cliente valida la historia en vivo y cierra #31',
+  },
+  {
+    name: 'Matriz',
+    id: 'acta',
+    where: 'docs/trazabilidad.md',
+    sample: '| RF-02 | M | #31 | auth · features/auth | #74, #77, #78 | CP-02-01 a 13 | U, I, E | Hecho |',
+  },
+];
+const breakAt = 2; // "Romper la cadena" deja un caso de prueba sin test
+---
+
+<div class="iso">
+  {
+    processes.map((p) => (
+      <div class="card process">
+        <div class="process-head">
+          <span class="mono process-id">{p.id}</span>
+          <div>
+            <div class="process-name">{p.name}</div>
+            <div class="process-q">{p.question}</div>
+          </div>
+        </div>
+        <ol class="activities">
+          {p.activities.map((a) => (
+            <li>
+              <span class="mono act-id">{a.id}</span>
+              <span class="act-body">
+                <span class="act-name">{a.name}</span>
+                <span class="act-doc">{a.doc}</span>
+              </span>
+              <span class:list={['mono', 'act-status', a.status.replace(' ', '-')]}>{a.status}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ))
+  }
+</div>
+
+<h3 class="subhead">La cadena de un requisito, con el caso real de RF-02</h3>
+
+<div class="card chain" data-chain data-break-at={breakAt} data-links={JSON.stringify(links)}>
+  <div class="controls">
+    <button type="button" class="btn btn-primary" data-follow>Seguir la cadena</button>
+    <button type="button" class="btn" data-break>Romper la cadena</button>
+  </div>
+
+  <ol class="links">
+    {
+      links.map((l, i) => (
+        <li>
+          <button type="button" class="link" data-link={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <span class="link-name">{l.name}</span>
+            <span class="mono link-id">{l.id}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="artifact" aria-live="polite">
+    <div class="mono where" data-where>{links[0].where}</div>
+    <code class="sample" data-sample>{links[0].sample}</code>
+  </div>
+  <p class="note" data-note>
+    Cada flecha es una referencia que se puede seguir en los dos sentidos: del requisito al test, y del test al requisito.
+  </p>
+</div>
+
+<script>
+  type Link = { name: string; id: string; where: string; sample: string };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-chain]').forEach((root) => {
+    const links: Link[] = JSON.parse(root.dataset.links ?? '[]');
+    const breakAt = Number(root.dataset.breakAt);
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-link]')];
+    const where = root.querySelector<HTMLElement>('[data-where]')!;
+    const sample = root.querySelector<HTMLElement>('[data-sample]')!;
+    const note = root.querySelector<HTMLElement>('[data-note]')!;
+    const defaultNote = note.textContent;
+    let timers: number[] = [];
+
+    const show = (i: number) => {
+      buttons.forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+      where.textContent = links[i].where;
+      sample.textContent = links[i].sample;
+    };
+
+    const walk = (broken: boolean) => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      buttons.forEach((b) => (b.dataset.state = ''));
+      note.textContent = defaultNote;
+      const last = broken ? breakAt : links.length - 1;
+      const step = reduce ? 0 : 450;
+      for (let i = 0; i <= last; i++) {
+        timers.push(
+          window.setTimeout(() => {
+            const failed = broken && i === breakAt;
+            buttons[i].dataset.state = failed ? 'fail' : 'ok';
+            show(i);
+            if (failed) {
+              sample.textContent = '// CP-02-05 está en la historia, pero ningún test lleva su ID';
+              note.textContent =
+                '✗ Un criterio sin test rompe la cadena: el revisor del PR lo marca y la historia no se acepta en la demo.';
+            } else if (i === last) {
+              note.textContent = '✓ Cadena completa: el requisito está implementado, probado y aceptado.';
+            }
+          }, step * i),
+        );
+      }
+    };
+
+    root.querySelector('[data-follow]')!.addEventListener('click', () => walk(false));
+    root.querySelector('[data-break]')!.addEventListener('click', () => walk(true));
+    buttons.forEach((b, i) => b.addEventListener('click', () => show(i)));
+  });
+</script>
+
+<style>
+  .iso {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+    gap: 16px;
+  }
+  .process {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .process-head {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .process-id {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+  .process-name {
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .process-q {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .activities {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .activities li {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .act-id {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .act-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .act-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .act-doc {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .act-status {
+    font-size: 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0 8px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .act-status.hecho {
+    border-color: var(--ok);
+    color: var(--ok);
+  }
+  .act-status.en-uso,
+  .act-status.en-curso {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .subhead {
+    margin: 40px 0 16px;
+    font-size: 20px;
+  }
+  .chain {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+  }
+  .links li {
+    position: relative;
+  }
+  .link {
+    width: 100%;
+    min-height: 64px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .link:hover,
+  .link[aria-pressed='true'] {
+    background: var(--accent-soft);
+  }
+  .link-name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .link-id {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .link[data-state='ok'] {
+    border-color: var(--ok);
+    box-shadow: inset 0 -4px 0 var(--ok);
+  }
+  .link[data-state='fail'] {
+    border-color: var(--bad);
+    border-style: dashed;
+    box-shadow: inset 0 -4px 0 var(--bad);
+  }
+  .artifact {
+    background: var(--terminal);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .where {
+    font-size: 12px;
+    color: var(--terminal-key);
+    overflow-wrap: anywhere;
+  }
+  .sample {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--terminal-val);
+    overflow-wrap: anywhere;
+  }
+  .note {
+    min-height: 1.6em;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+</style>

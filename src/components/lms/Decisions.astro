@@ -1,0 +1,143 @@
+---
+// Resumen de los ADR de docs/diseno/adr/ del monorepo: qué se decidió y qué se pagó a cambio. Cada ADR es una partida guardada.
+const adrs = [
+  {
+    n: '001',
+    title: 'Aislamiento multi-tenant',
+    decision: 'Cada tabla de una organización lleva su propio organizationId, y una extensión de Prisma lo filtra en toda consulta.',
+    tradeoff: 'Datos redundantes, a cambio de un aislamiento uniforme y difícil de olvidar en un endpoint nuevo.',
+  },
+  {
+    n: '002',
+    title: 'Autorización en vivo',
+    decision: 'El rol del JWT es solo informativo: cada petición resuelve el permiso contra la base.',
+    tradeoff: 'Una consulta por petición, a cambio de que un cambio de rol se aplique al instante y sin cerrar sesión.',
+  },
+  {
+    n: '003',
+    title: 'Acceso remoto a la base de test',
+    decision: 'Túnel SSH con un usuario sin shell que solo puede reenviar a 127.0.0.1:5432, con una clave por persona.',
+    tradeoff: 'Un paso más para conectarse, a cambio de que Postgres nunca quede expuesto a internet.',
+  },
+  {
+    n: '004',
+    title: 'Cloudflare Tunnel',
+    decision: 'Conexión saliente al borde de Cloudflare, con Access por email delante de cada hostname.',
+    tradeoff: 'Dependencia de un servicio gratuito de terceros, a cambio de cero puertos abiertos en el router y adiós al DDNS.',
+  },
+  {
+    n: '005',
+    title: 'Login con selección de organización',
+    decision: 'Un token de selección de 5 minutos, separado del de acceso, que solo sirve para elegir organización.',
+    tradeoff: 'Dos tipos de token que hay que mantener separados, a cambio de no guardar la contraseña ni emitir sesiones a medias.',
+  },
+  {
+    n: '006',
+    title: 'Respaldo diario local',
+    decision: 'pg_dump y mc mirror cada noche en el mismo servidor, con 7 días de retención.',
+    tradeoff: 'Si el disco muere se pierde todo: riesgo aceptado por escrito mientras solo haya usuarios internos.',
+    provisional: true,
+  },
+  {
+    n: '007',
+    title: 'CI obligatorio por convención',
+    decision: 'Sin protección de ramas en GitHub Free, la regla "no se mergea en rojo" la aplica el equipo, y el acta la audita.',
+    tradeoff: 'Depende de la disciplina y no de la herramienta, a cambio de costo cero y de mantener el repo privado.',
+  },
+];
+---
+
+<ol class="adrs">
+  {
+    adrs.map((a, i) => (
+      <li class="card adr">
+        <div class="adr-head">
+          <span class="mono adr-n">SLOT {i + 1} · ADR-{a.n}</span>
+          {a.provisional ? (
+            <span class="mono provisional">◆ provisional</span>
+          ) : (
+            <span class="mono saved" aria-hidden="true">
+              ♥♥♥
+            </span>
+          )}
+        </div>
+        <h3 class="adr-title">{a.title}</h3>
+        <p class="decision">{a.decision}</p>
+        <p class="tradeoff">
+          <span class="mono tradeoff-label">▶ a cambio de</span>
+          {a.tradeoff}
+        </p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .adrs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: 20px;
+  }
+  .adr {
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  /* Cabecera invertida, como la barra de una pantalla de "cargar partida". */
+  .adr-head {
+    margin: -18px -20px 4px;
+    padding: 8px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .adr-n {
+    font-size: 13px;
+  }
+  .saved {
+    color: var(--data);
+    letter-spacing: 0.1em;
+  }
+  .provisional {
+    font-size: 12px;
+    color: var(--paper);
+    animation: blink-prov 1.2s steps(1) infinite;
+  }
+  @keyframes blink-prov {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  .adr-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+  .decision {
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .tradeoff {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: var(--px) dotted var(--line);
+    font-size: 15px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tradeoff-label {
+    font-size: 12px;
+    color: var(--data);
+    text-transform: uppercase;
+  }
+</style>
