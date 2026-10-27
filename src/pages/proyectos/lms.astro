@@ -7,6 +7,8 @@ import Pipeline from '../../components/lms/Pipeline.astro';
 import TestPyramid from '../../components/lms/TestPyramid.astro';
 import GitMetro from '../../components/lms/GitMetro.astro';
 import Roadmap from '../../components/lms/Roadmap.astro';
+import Traceability from '../../components/lms/Traceability.astro';
+import Decisions from '../../components/lms/Decisions.astro';
 import { withBase } from '../../data/site';
 
 const rules = [
@@ -14,9 +16,10 @@ const rules = [
   { icon: 'lines', title: 'Ramas tipadas + Conventional Commits', text: 'feat/, fix/, docs/, chore/… y commits pequeños.', to: 's05', toLabel: '05 GitFlow' },
   { icon: 'layers', title: 'Un PR por capa', text: 'Una historia se entrega en orden: base de datos → backend → frontend.', to: 's05', toLabel: '05 GitFlow' },
   { icon: 'pyramid', title: 'Tres capas de tests en cada PR', text: 'Unitarios, integración contra un Postgres real y E2E con navegador.', to: 's04', toLabel: '04 Pirámide' },
-  { icon: 'servers', title: 'Dos ambientes reales', text: 'dev y prod en paralelo en mi propio servidor, desplegados de forma automática.', to: 's06', toLabel: '06 Homelab' },
-  { icon: 'shield', title: 'Seguridad desde el diseño', text: 'Cero secretos en el repo; la autorización se valida en la lógica de negocio.', to: 's02', toLabel: '02 Arquitectura' },
-  { icon: 'bot', title: 'IA con reglas, no en piloto automático', text: 'La IA propone; yo reviso, hago commit y abro el PR.', to: 's07', toLabel: '07 Agentes', highlight: true },
+  { icon: 'servers', title: 'Dos ambientes reales', text: 'dev y prod en paralelo en mi propio servidor, desplegados de forma automática.', to: 's07', toLabel: '07 Homelab' },
+  { icon: 'shield', title: 'Seguridad desde el diseño', text: 'Cero secretos en el repo; la autorización se valida contra la base en cada petición.', to: 's08', toLabel: '08 Decisiones' },
+  { icon: 'lines', title: 'Proceso con norma: ISO/IEC 29110', text: 'Requisitos, casos de prueba, actas semanales y trazabilidad, versionados en git.', to: 's06', toLabel: '06 Proceso' },
+  { icon: 'bot', title: 'IA con reglas, no en piloto automático', text: 'La IA propone; yo reviso, hago commit y abro el PR.', to: 's09', toLabel: '09 Agentes', highlight: true },
 ] as const;
 
 const architecture = [
@@ -39,21 +42,22 @@ const agents = [
   { name: 'devops', can: 'docker/ y workflows', cannot: 'no ejecuta comandos' },
   { name: 'reviewer', can: 'revisa todo el repo', cannot: 'solo lectura' },
   { name: 'server-auditor', can: 'diagnostica el servidor', cannot: 'solo lectura' },
+  { name: 'acta', can: 'borrador del acta semanal', cannot: 'no decide acuerdos' },
 ];
 
 ---
 
 <BaseLayout
   title="LMS — caso de estudio · Javier Choque"
-  description="Cómo construí un LMS desde cero con prácticas de equipo profesional: CI/CD, GitFlow, tres capas de tests y dos ambientes en mi propio servidor."
+  description="Cómo construí un LMS desde cero con prácticas de equipo profesional: CI/CD, GitFlow, tres capas de tests, proceso ISO/IEC 29110 y dos ambientes en mi propio servidor."
 >
   <!-- 00 HERO -->
   <section class="container hero">
     <a class="back mono" href={withBase('/#proyectos')}>← Inicio / Proyectos / LMS</a>
     <h1>Un LMS construido como si fuera para una empresa.</h1>
     <p class="lead">
-      NestJS + Angular + Postgres + MinIO, con CI/CD a dos ambientes en mi propio servidor. El producto es la excusa; el
-      proceso es el punto.
+      NestJS + Angular + Postgres + MinIO, con CI/CD a dos ambientes en mi propio servidor y un proceso basado en
+      ISO/IEC 29110. El producto es la excusa; el proceso es el punto.
     </p>
     <Counters />
   </section>
@@ -155,15 +159,26 @@ const agents = [
       number="05"
       kicker="GitFlow"
       title="El metro de ramas"
-      lead="Los últimos PRs reales del proyecto. Cada rama sale de develop y vuelve por Pull Request; main recibe releases."
+      lead="PRs reales del proyecto, desde la release 1.0 hasta hoy. Cada rama sale de develop y vuelve por Pull Request; main recibe releases."
     />
     <GitMetro />
   </section>
 
-  <!-- 06 HOMELAB -->
+  <!-- 06 PROCESO -->
   <section id="s06" class="section container">
     <SectionHeader
       number="06"
+      kicker="Proceso"
+      title="ISO/IEC 29110, en versión liviana"
+      lead="Una norma de ciclo de vida para equipos muy pequeños. Uso el perfil Entrada, sin certificación: cada actividad deja un documento en Markdown, revisado por PR como el código."
+    />
+    <Traceability />
+  </section>
+
+  <!-- 07 HOMELAB -->
+  <section id="s07" class="section container">
+    <SectionHeader
+      number="07"
       kicker="Infraestructura"
       title="El homelab por dentro"
       lead="Un solo servidor, dos ambientes aislados por base de datos y por bucket. Los ambientes viven en gitflow.cl (prod) y dev.gitflow.cl (dev) detrás de Cloudflare Tunnel + Access: solo el equipo de desarrollo puede entrar."
@@ -188,10 +203,21 @@ const agents = [
     </div>
   </section>
 
-  <!-- 07 AGENTES -->
-  <section id="s07" class="section container">
+  <!-- 08 DECISIONES -->
+  <section id="s08" class="section container">
     <SectionHeader
-      number="07"
+      number="08"
+      kicker="Decisiones"
+      title="Partidas guardadas: los ADRs"
+      lead="Cada decisión de arquitectura queda guardada con su contexto, las opciones que descarté y lo que pagué a cambio."
+    />
+    <Decisions />
+  </section>
+
+  <!-- 09 AGENTES -->
+  <section id="s09" class="section container">
+    <SectionHeader
+      number="09"
       kicker="Claude Code"
       title="El equipo de agentes"
       lead="Uso Claude Code con agentes especializados por capa. Cada uno tiene límites claros, y ninguno hace commit ni push por su cuenta."
@@ -208,7 +234,7 @@ const agents = [
       }
       <div class="decider">
         <strong>Yo decido</strong>
-        <span>IA propone → yo reviso → commit → PR → CI</span>
+        <span>IA propone → yo reviso → commit → PR → CI → acta del viernes</span>
       </div>
       {
         agents.slice(3).map((a) => (
@@ -222,9 +248,9 @@ const agents = [
     </div>
   </section>
 
-  <!-- 08 PROBLEMAS -->
-  <section id="s08" class="section container">
-    <SectionHeader number="08" kicker="Problemas reales" title="Lo que se rompió y cómo lo arreglé" />
+  <!-- 10 PROBLEMAS -->
+  <section id="s10" class="section container">
+    <SectionHeader number="10" kicker="Problemas reales" title="Lo que se rompió y cómo lo arreglé" />
     <div class="problems">
       <article class="card problem">
         <h3>Docker no llegaba a Postgres</h3>
@@ -235,14 +261,36 @@ const agents = [
         </p>
         <p><strong>Fix:</strong> una regla en pg_hba.conf para el rango de las redes bridge de Docker.</p>
       </article>
-      <!-- TODO: otro problema real -->
-      <div class="placeholder problem-ph">[OTRO PROBLEMA REAL]</div>
+      <article class="card problem">
+        <h3>GitHub no me dejaba proteger las ramas</h3>
+        <code class="error">403 Upgrade to GitHub Pro or make this repository public to enable this feature</code>
+        <p>
+          <strong>Causa:</strong> en un repo privado del plan Free no existe la protección de ramas, así que el botón de merge
+          sigue habilitado aunque el CI esté en rojo.
+        </p>
+        <p>
+          <strong>Fix:</strong> lo convertí en regla del equipo (ADR-007) y en un control del acta semanal, que revisa checks y
+          aprobaciones de cada PR mergeado.
+        </p>
+      </article>
+      <article class="card problem">
+        <h3>El acta me encontró a mí</h3>
+        <code class="error">mergedBy = autor · reviews: 0</code>
+        <p>
+          <strong>Causa:</strong> al preparar la primera acta semanal, el agente <code>acta</code> cruzó los PRs con GitHub y
+          encontró al menos 12 mergeados sin revisión de otra persona, incluidos los que definieron el propio proceso.
+        </p>
+        <p>
+          <strong>Fix:</strong> quedó como lección aprendida, y se propuso como acuerdo una revisión posterior de esos tests más
+          la aprobación de alguien distinto del autor en todo PR. El proceso sirve justamente para detectar mis propios atajos.
+        </p>
+      </article>
     </div>
   </section>
 
-  <!-- 09 EQUIPO -->
-  <section id="s09" class="section container">
-    <SectionHeader number="09" kicker="Equipo" title="Quién participó" />
+  <!-- 11 EQUIPO -->
+  <section id="s11" class="section container">
+    <SectionHeader number="11" kicker="Equipo" title="Quién participó" />
     <div class="team">
       <div class="card member">
         <span class="avatar">JC</span>
@@ -261,13 +309,13 @@ const agents = [
     </div>
   </section>
 
-  <!-- 10 ROADMAP -->
-  <section id="s10" class="section container">
+  <!-- 12 ROADMAP -->
+  <section id="s12" class="section container">
     <SectionHeader
-      number="10"
+      number="12"
       kicker="Roadmap"
       title="Hacia dónde va"
-      lead="Base ya construida: autenticación, cursos y adjuntos. Lo que sigue está planificado como épicas e historias en GitHub; abre una épica para ver sus historias."
+      lead="Base ya construida: autenticación, cursos, adjuntos y login con organizaciones (E1-H1 y E2-H1 aceptadas). Lo que sigue está planificado como épicas e historias en GitHub; abre una épica para ver sus historias."
     />
     <Roadmap />
   </section>
@@ -522,9 +570,6 @@ const agents = [
     border-radius: 6px;
     padding: 10px 12px;
     overflow-wrap: anywhere;
-  }
-  .problem-ph {
-    min-height: 200px;
   }
   .member {
     padding: 20px;

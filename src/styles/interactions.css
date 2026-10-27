@@ -4,11 +4,11 @@
    apaga todas las animaciones y quedan solo los cambios de color y posición. */
 
 /* 1. Al pasar el mouse o enfocar: el elemento "se levanta" y al presionar se hunde. */
-:root :is(a.card, button.slot, button.station, .selector button, a.tape) {
+:root :is(a.card, button.slot, button.station, button.link, .selector button, a.tape) {
   cursor: pointer;
   transition: transform 0.1s steps(2);
 }
-:root :is(a.card, button.slot, button.station, .selector button, a.tape):is(:hover, :focus-visible) {
+:root :is(a.card, button.slot, button.station, button.link, .selector button, a.tape):is(:hover, :focus-visible) {
   transform: translate(-4px, -4px);
   box-shadow:
     -4px 0 0 0 var(--ink),
@@ -17,7 +17,7 @@
     0 4px 0 0 var(--ink),
     10px 10px 0 0 var(--ink);
 }
-:root :is(a.card, button.slot, button.station, .selector button, a.tape):active {
+:root :is(a.card, button.slot, button.station, button.link, .selector button, a.tape):active {
   transform: translate(0, 0);
   box-shadow:
     -4px 0 0 0 var(--ink),
@@ -41,7 +41,8 @@
 }
 :root .slots:not(:has([aria-pressed='true'])) li:first-child button.slot,
 :root .roadmap:not(:has(details[open])) .epic:first-child summary,
-:root .pipeline:not(:has([data-state='ok'], [data-state='fail'])) [data-run] {
+:root .pipeline:not(:has([data-state='ok'], [data-state='fail'])) [data-run],
+:root .chain:not(:has([data-state='ok'], [data-state='fail'])) [data-follow] {
   animation: hint-ring 1.2s steps(1) infinite;
 }
 

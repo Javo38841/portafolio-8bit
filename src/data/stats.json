@@ -1,16 +1,30 @@
 {
   "_comment": "Hoy se escribe a mano. Objetivo: que el CI del monorepo LMS lo regenere en cada merge (reportes JSON de Jest/Playwright + gh pr list).",
-  "generatedAt": "2026-10-07",
-  "source": "conteo manual de it()/test() en el repo LMS",
-  "prsMerged": 19,
+  "generatedAt": "2026-10-26",
+  "source": "conteo de it()/test() en develop (#92)",
+  "prsMerged": 40,
   "environments": 2,
-  "agents": 6,
+  "agents": 7,
   "tests": {
     "todo": {
       "label": "Todo el proyecto",
       "short": "Todo",
-      "unit": 89,
-      "integration": 25,
+      "unit": 130,
+      "integration": 49,
+      "e2e": 10
+    },
+    "auth": {
+      "label": "Auth",
+      "short": "Auth",
+      "unit": 54,
+      "integration": 21,
+      "e2e": 5
+    },
+    "organizaciones": {
+      "label": "Organizaciones",
+      "short": "Organizaciones",
+      "unit": 6,
+      "integration": 9,
       "e2e": 5
     },
     "cursos": {
@@ -19,13 +33,6 @@
       "unit": 42,
       "integration": 12,
       "e2e": 0
-    },
-    "auth": {
-      "label": "Auth",
-      "short": "Auth",
-      "unit": 22,
-      "integration": 6,
-      "e2e": 5
     },
     "adjuntos": {
       "label": "Adjuntos",
@@ -50,52 +57,70 @@
   },
   "gitflow": [
     {
-      "pr": 12,
-      "branch": "feat/courses-frontend",
-      "base": "develop",
-      "title": "feat(courses): CRUD de cursos en frontend con inscripción"
-    },
-    {
-      "pr": 13,
-      "branch": "docs/acceso-db-test",
-      "base": "develop",
-      "title": "docs(db): guía de acceso a la base de test"
-    },
-    {
-      "pr": 14,
-      "branch": "chore/dev-backend-loopback",
-      "base": "develop",
-      "title": "chore(docker): publicar backend de dev solo en loopback"
-    },
-    {
-      "pr": 15,
-      "branch": "feat/frontend-navigation",
-      "base": "develop",
-      "title": "feat(frontend): agregar navegación compartida"
-    },
-    {
       "pr": 16,
       "branch": "develop",
       "base": "main",
       "title": "release 1.0"
     },
     {
-      "pr": 17,
-      "branch": "chore/docker-test-db",
+      "pr": 74,
+      "branch": "feat/login-organizations",
       "base": "develop",
-      "title": "chore(docker): base de test descartable para integración y E2E"
+      "title": "feat(backend): login con membresías y JWT con orgId"
     },
     {
-      "pr": 35,
-      "branch": "docs/convencion-prs-por-capa",
+      "pr": 77,
+      "branch": "feat/login-organizations",
       "base": "develop",
-      "title": "docs: convención de PRs por capa para historias"
+      "title": "feat(backend): usuario demo con dos organizaciones para el e2e"
     },
     {
-      "pr": 51,
-      "branch": "feat/frontend-home",
+      "pr": 78,
+      "branch": "feat/select-organization-ui",
       "base": "develop",
-      "title": "feat(frontend): mejorar inicio con accesos por rol"
+      "title": "feat(frontend): selección de organización tras el login"
+    },
+    {
+      "pr": 79,
+      "branch": "ci/seed-dev-on-deploy",
+      "base": "develop",
+      "title": "ci: seed de usuarios demo en cada deploy de dev"
+    },
+    {
+      "pr": 81,
+      "branch": "docs/swagger-auth-organizations",
+      "base": "develop",
+      "title": "docs(backend): Swagger de auth y organizations con ejemplos"
+    },
+    {
+      "pr": 83,
+      "branch": "docs/iso29110-perfil-entrada",
+      "base": "develop",
+      "title": "docs: documentos del perfil Entrada de ISO/IEC 29110"
+    },
+    {
+      "pr": 84,
+      "branch": "test/cp-ids-29-31",
+      "base": "develop",
+      "title": "test: casos de prueba de #29 y #31 ejecutados en el CI"
+    },
+    {
+      "pr": 86,
+      "branch": "chore/agentes-proceso",
+      "base": "develop",
+      "title": "chore: agentes de Claude Code alineados con el proceso"
+    },
+    {
+      "pr": 90,
+      "branch": "test/cp-ids-y-rnf-06",
+      "base": "develop",
+      "title": "test: IDs de casos pendientes y RNF-06 como control permanente"
+    },
+    {
+      "pr": 92,
+      "branch": "docs/refs-issue-proceso",
+      "base": "develop",
+      "title": "docs: Refs obligatorio en todo PR, con issues paraguas"
     }
   ],
   "roadmap": {
@@ -104,18 +129,24 @@
         "id": "E1",
         "issue": 18,
         "title": "Organizaciones y tenencia",
-        "status": "planificada",
+        "status": "en curso",
         "stories": [
           {
             "issue": 29,
             "id": "E1-H1",
             "title": "Crear organización con admin inicial",
-            "status": "planificada"
+            "status": "hecha"
           },
           {
             "issue": 30,
             "id": "E1-H2",
             "title": "Aislamiento de datos por organización",
+            "status": "planificada"
+          },
+          {
+            "issue": 58,
+            "id": "E1-H3",
+            "title": "Promover y revocar superadmin",
             "status": "planificada"
           }
         ]
@@ -124,18 +155,30 @@
         "id": "E2",
         "issue": 19,
         "title": "Autenticación y usuarios",
-        "status": "planificada",
+        "status": "en curso",
         "stories": [
           {
             "issue": 31,
             "id": "E2-H1",
             "title": "Iniciar sesión y elegir organización",
-            "status": "planificada"
+            "status": "hecha"
           },
           {
             "issue": 32,
             "id": "E2-H2",
             "title": "Ver y editar mi perfil",
+            "status": "planificada"
+          },
+          {
+            "issue": 75,
+            "id": "E2-H3",
+            "title": "Alta masiva de usuarios con enlace de activación (propuesta)",
+            "status": "planificada"
+          },
+          {
+            "issue": 76,
+            "id": "E2-H4",
+            "title": "Postular a una organización (propuesta)",
             "status": "planificada"
           }
         ]
@@ -182,6 +225,12 @@
             "issue": 38,
             "id": "E4-H3",
             "title": "Categorizar cursos (propuesta)",
+            "status": "planificada"
+          },
+          {
+            "issue": 64,
+            "id": "E4-H4",
+            "title": "Lección de video",
             "status": "planificada"
           }
         ]
@@ -259,7 +308,7 @@
           {
             "issue": 48,
             "id": "E7-H3",
-            "title": "Definir escala de calificaciones por curso (propuesta)",
+            "title": "Elegir el sistema de calificación de la organización",
             "status": "planificada"
           }
         ]
@@ -287,7 +336,13 @@
           {
             "issue": 50,
             "id": "E9-H1",
-            "title": "Ver mi progreso en un curso (propuesta)",
+            "title": "Ver mi progreso en un curso",
+            "status": "planificada"
+          },
+          {
+            "issue": 59,
+            "id": "E9-H2",
+            "title": "Finalizar un curso, automático o manual",
             "status": "planificada"
           }
         ]
@@ -297,20 +352,88 @@
         "issue": 27,
         "title": "Subdominios por organización",
         "status": "planificada",
-        "stories": []
+        "stories": [
+          {
+            "issue": 52,
+            "id": "E10-H1",
+            "title": "Acceder a mi organización por su subdominio",
+            "status": "planificada"
+          },
+          {
+            "issue": 53,
+            "id": "E10-H2",
+            "title": "Ver el nombre de mi organización en la interfaz (propuesta)",
+            "status": "planificada"
+          }
+        ]
       },
       {
         "id": "E11",
         "issue": 28,
         "title": "Calendario, noticias, avisos y notificaciones",
         "status": "planificada",
-        "stories": []
+        "stories": [
+          {
+            "issue": 54,
+            "id": "E11-H1",
+            "title": "Publicar avisos en el curso (propuesta)",
+            "status": "planificada"
+          },
+          {
+            "issue": 55,
+            "id": "E11-H2",
+            "title": "Notificación al calificar una entrega (propuesta)",
+            "status": "planificada"
+          },
+          {
+            "issue": 56,
+            "id": "E11-H3",
+            "title": "Calendario de fechas límite (propuesta)",
+            "status": "planificada"
+          }
+        ]
+      },
+      {
+        "id": "E12",
+        "issue": 60,
+        "title": "Cuestionarios",
+        "status": "planificada",
+        "stories": [
+          {
+            "issue": 61,
+            "id": "E12-H1",
+            "title": "Crear cuestionario de opción múltiple",
+            "status": "planificada"
+          },
+          {
+            "issue": 62,
+            "id": "E12-H2",
+            "title": "Responder un cuestionario dentro del tiempo y los intentos",
+            "status": "planificada"
+          },
+          {
+            "issue": 63,
+            "id": "E12-H3",
+            "title": "Calificación automática del cuestionario",
+            "status": "planificada"
+          }
+        ]
       }
     ],
     "infra": [
       {
         "issue": 45,
         "title": "Publicar MinIO en files.gitflow.cl para URLs prefirmadas fuera de la LAN",
+        "status": "planificada"
+      },
+      {
+        "issue": 65,
+        "title": "DNS wildcard y resolver el conflicto de Access para subdominios de organización",
+        "status": "planificada"
+      },
+      {
+        "issue": 82,
+        "title": "Respaldo diario de lms_prod y del bucket de prod",
         "status": "planificada"
       }
     ]
