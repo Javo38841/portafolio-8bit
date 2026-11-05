@@ -1,4 +1,6 @@
 ---
+import { getLang, useTranslations } from '../i18n/ui';
+
 interface Props {
   number: string;
   kicker: string;
@@ -7,11 +9,12 @@ interface Props {
 }
 
 const { number, kicker, title, lead } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale));
 ---
 
 <header class="section-header">
   <div class="label">
-    <span class="level">Nivel {number}</span>
+    <span class="level">{t('section.level')} {number}</span>
     <span>{kicker}</span>
   </div>
   <h2>{title}</h2>

@@ -3,34 +3,31 @@ import Icon from '../Icon.astro';
 import CopyEmail from '../CopyEmail.astro';
 import { site, withBase } from '../../data/site';
 import stats from '../../data/stats.json';
+import { getLang, useTranslations } from '../../i18n/ui';
+import { home } from '../../i18n/home';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const h = home[lang].hero;
 
 const total = stats.tests.todo.unit + stats.tests.todo.integration + stats.tests.todo.e2e;
 
-const strip = [
-  { kicker: 'Hoy', text: 'Soporte TI y software · NestJS + Angular' },
-  { kicker: 'Construyo', text: 'Homelab, CI/CD y un LMS propio' },
-  { kicker: 'Enseño', text: 'Git, Java y talleres de programación' },
-  { kicker: 'Aprendo', text: 'Terraform y AWS' },
-];
+const strip = h.strip;
 ---
 
 <section class="container hero">
   <div class="grid">
     <div class="copy">
-      <div class="kicker">{site.role} · {site.location}</div>
-      <!-- TODO: revisar el texto final del hero -->
-      <h1>Hola, soy Javier.</h1>
-      <p class="tagline">Construyo software como en una empresa — y enseño a hacerlo.</p>
-      <p class="lead">
-        Analista de Soporte TI y Software en Intermex. Fuera del trabajo monto mi propia infraestructura: un homelab con
-        CI/CD y un LMS hecho desde cero con prácticas de equipo profesional.
-      </p>
+      <div class="kicker">{t('site.role')} · {site.location}</div>
+      <h1>{h.hello}</h1>
+      <p class="tagline">{h.tagline}</p>
+      <p class="lead">{h.lead}</p>
       <div class="actions">
-        <a class="btn btn-primary" href={withBase('/proyectos/lms')}>▶ Ver el caso LMS</a>
+        <a class="btn btn-primary" href={withBase('/proyectos/lms')}>{h.openLms}</a>
         {
           site.cvPdf && (
             <a class="btn" href={withBase(site.cvPdf)} download>
-              Descargar CV
+              {h.downloadCv}
             </a>
           )
         }
@@ -49,11 +46,11 @@ const strip = [
             <span class="led"></span>
             <span>BATTERY</span>
           </div>
-          <div class="screen" aria-label="Estadísticas del proyecto LMS">
+          <div class="screen" aria-label={h.statsLabel}>
             <p class="screen-title">JAVIER.CHOQUE</p>
             <p>TESTS....{total}</p>
             <p>PRS......{stats.prsMerged}</p>
-            <p>AMBIENTES.{stats.environments}</p>
+            <p>{h.envs}{stats.environments}</p>
             <p class="blink press">PRESS START</p>
           </div>
         </div>
@@ -61,8 +58,8 @@ const strip = [
         <div class="pad">
           <div class="dpad" aria-hidden="true"><span class="h"></span><span class="v"></span></div>
           <div class="ab">
-            <a class="key b" href="#contacto" aria-label="Botón B: ir a contacto">B</a>
-            <a class="key a" href={withBase('/proyectos/lms')} aria-label="Botón A: ver el caso LMS">A</a>
+            <a class="key b" href="#contacto" aria-label={h.keyB}>B</a>
+            <a class="key a" href={withBase('/proyectos/lms')} aria-label={h.keyA}>A</a>
           </div>
         </div>
         <div class="startselect" aria-hidden="true">

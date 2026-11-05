@@ -7,6 +7,7 @@ import '../styles/interactions.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
+import { getLang, langs, languages, localizePath, stripLang, isTranslated } from '../i18n/ui';
 
 interface Props {
   title: string;
@@ -14,10 +15,16 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const path = stripLang(Astro.url.pathname);
+// hreflang: le dice a los buscadores qué URL corresponde a cada idioma.
+const alternates = isTranslated(path)
+  ? langs.map((l) => ({ hreflang: languages[l].htmlLang, href: new URL(localizePath(path, l), Astro.site).href }))
+  : [];
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={languages[lang].htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,13 +33,16 @@ const { title, description } = Astro.props;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={languages[lang].ogLocale} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    {alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
   <body>
     <Nav />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <Footer />

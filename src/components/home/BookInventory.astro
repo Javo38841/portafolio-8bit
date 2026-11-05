@@ -1,9 +1,11 @@
 ---
 // Libros como ítems de un inventario de RPG. Con `interactive`, elegir un ítem abre un cuadro de diálogo.
+import { getLang, useTranslations } from '../../i18n/ui';
+
 interface Book {
   title: string;
   author: string;
-  applied?: string;
+  applied?: string | Record<string, string>;
 }
 
 interface Props {
@@ -12,7 +14,15 @@ interface Props {
   interactive?: boolean;
 }
 
-const { books, label, interactive = false } = Astro.props;
+const { books: raw, label, interactive = false } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const books = raw.map((b) => ({
+  ...b,
+  applied: typeof b.applied === 'object' ? (b.applied[lang] ?? b.applied.es) : b.applied,
+}));
+// "¡Obtuviste {title}!" partido en dos para meter el título en medio
+const [gotBefore, gotAfter] = t('inv.got').split('{title}');
 ---
 
 <div class="inventory" data-inventory={interactive ? JSON.stringify(books) : undefined}>
@@ -54,16 +64,16 @@ const { books, label, interactive = false } = Astro.props;
   {
     interactive && (
       <div class="dialog" aria-live="polite">
-        <p data-empty>Elige un ítem del inventario.</p>
+        <p data-empty>{t('inv.pick')}</p>
         <div data-fields hidden>
           <p class="got">
-            ¡Obtuviste <span data-field="title" />!
+            {gotBefore}<span data-field="title" />{gotAfter}
           </p>
           <p>
-            AUTOR: <span data-field="author" />
+            {t('inv.author')}: <span data-field="author" />
           </p>
           <p>
-            EFECTO: <span data-field="applied" />
+            {t('inv.effect')}: <span data-field="applied" />
           </p>
         </div>
         <span class="next blink" aria-hidden="true">

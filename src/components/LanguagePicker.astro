@@ -1,0 +1,105 @@
+---
+// Selector ES · EN · PT. Cada idioma es otra URL (/, /en/, /pt/).
+// Si la página actual aún no está traducida, el link lleva al inicio de ese idioma.
+import Flag from './Flag.astro';
+import { getLang, langs, languages, localizePath, stripLang, isTranslated, useTranslations } from '../i18n/ui';
+
+interface Props {
+  variant?: 'compact' | 'list';
+}
+
+const { variant = 'compact' } = Astro.props;
+const current = getLang(Astro.currentLocale);
+const t = useTranslations(current);
+const path = stripLang(Astro.url.pathname);
+const translated = isTranslated(path);
+
+const items = langs.map((l) => ({
+  lang: l,
+  ...languages[l],
+  href: translated || l === 'es' ? localizePath(path, l) : localizePath('/', l),
+  note: !translated && l !== 'es' ? useTranslations(l)('lang.onlyEs') : undefined,
+}));
+---
+
+<ul class:list={['langs', variant]} aria-label={t('lang.label')}>
+  {
+    items.map((i) => (
+      <li>
+        <a
+          href={i.href}
+          hreflang={i.htmlLang}
+          lang={i.htmlLang}
+          title={i.note}
+          aria-current={i.lang === current ? 'true' : undefined}
+        >
+          {variant === 'compact' ? (
+            <>
+              <Flag lang={i.lang} />
+              <abbr title={i.label}>{i.short}</abbr>
+            </>
+          ) : (
+            i.label
+          )}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .langs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  .langs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .langs a:hover {
+    color: var(--accent);
+  }
+  .langs a[aria-current='true'] {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  abbr {
+    text-decoration: none;
+  }
+
+  /* compacta: ES · EN · PT */
+  .compact {
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    gap: 2px;
+  }
+  .compact a {
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 8px;
+  }
+  .compact a:hover {
+    background: var(--hatch);
+  }
+  .compact a:not([aria-current='true']) :global(.flag) {
+    opacity: 0.75;
+  }
+  .compact a[aria-current='true'] {
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  /* lista: una por línea (footer) */
+  .list {
+    flex-direction: column;
+  }
+  .list a[aria-current='true']::before {
+    content: '▶ ';
+  }
+</style>

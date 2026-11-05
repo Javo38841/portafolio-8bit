@@ -107,7 +107,7 @@ const jobs = stats.ci.jobs.map((j) => j.name).join(' · ');
             if (failed) {
               pkg.dataset.state = 'fail';
               targets.dataset.state = 'blocked';
-              detail.textContent = 'GAME OVER · Fallaron los tests unitarios: el PR queda bloqueado y no se puede mergear.';
+              detail.textContent = 'GAME OVER · Fallaron los tests unitarios: el PR no se mergea hasta arreglarlo (regla del equipo, auditada en el acta).';
             } else if (i === last) {
               pkg.dataset.state = 'ok';
               targets.dataset.state = 'ok';

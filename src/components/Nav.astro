@@ -1,21 +1,26 @@
 ---
+import LanguagePicker from './LanguagePicker.astro';
 import { site, withBase } from '../data/site';
+import { getLang, localizePath, useTranslations } from '../i18n/ui';
 
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
 const links = [
-  { href: withBase('/#sobre-mi'), label: 'Sobre mí' },
-  { href: withBase('/#proyectos'), label: 'Proyectos' },
-  { href: withBase('/#enseno'), label: 'Enseño' },
-  { href: withBase('/#libros'), label: 'Libros' },
-  { href: withBase('/#contacto'), label: 'Contacto' },
+  { href: localizePath('/#sobre-mi', lang), label: t('nav.about') },
+  { href: localizePath('/#proyectos', lang), label: t('nav.projects') },
+  { href: localizePath('/#enseno', lang), label: t('nav.teach') },
+  { href: localizePath('/#libros', lang), label: t('nav.books') },
+  { href: localizePath('/#contacto', lang), label: t('nav.contact') },
 ];
 ---
 
 <div class="container">
-  <nav aria-label="Principal">
-    <a class="brand mono" href={withBase('/')}>{site.handle}</a>
+  <nav aria-label={t('nav.label')}>
+    <a class="brand mono" href={localizePath('/', lang)}>{site.handle}</a>
     <div class="links">
       {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      {site.cvPdf && <a class="cv" href={withBase(site.cvPdf)}>CV (PDF)</a>}
+      {site.cvPdf && <a class="cv" href={withBase(site.cvPdf)}>{t('nav.cv')}</a>}
+      <LanguagePicker />
     </div>
   </nav>
 </div>

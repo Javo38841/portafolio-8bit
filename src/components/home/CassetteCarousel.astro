@@ -1,11 +1,14 @@
 ---
 // Carrusel de casetes pixel: uno por artista, con su posición y nombre en la etiqueta.
+import { getLang, useTranslations } from '../../i18n/ui';
+
 interface Props {
   artists: string[];
   label: string;
 }
 
 const { artists, label } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale));
 const spotify = (name: string) => `https://open.spotify.com/search/${encodeURIComponent(name)}/artists`;
 ---
 
@@ -13,8 +16,8 @@ const spotify = (name: string) => `https://open.spotify.com/search/${encodeURICo
   <div class="bar">
     <span>{label}</span>
     <div class="controls">
-      <button type="button" class="ctrl" data-prev aria-label="Ver artistas anteriores">◀</button>
-      <button type="button" class="ctrl" data-next aria-label="Ver más artistas">▶</button>
+      <button type="button" class="ctrl" data-prev aria-label={t('crate.prev')}>◀</button>
+      <button type="button" class="ctrl" data-next aria-label={t('crate.next')}>▶</button>
     </div>
   </div>
 
@@ -27,10 +30,10 @@ const spotify = (name: string) => `https://open.spotify.com/search/${encodeURICo
             target="_blank"
             rel="noopener"
             class="tape"
-            aria-label={`${name} en Spotify (se abre en otra pestaña)`}
+            aria-label={t('crate.spotify', { name })}
           >
             <span class="label-strip">
-              <span class="rank">LADO A · {String(i + 1).padStart(2, '0')}</span>
+              <span class="rank">{t('tape.side')} · {String(i + 1).padStart(2, '0')}</span>
               <span class="name">{name}</span>
             </span>
             <span class="window" aria-hidden="true">

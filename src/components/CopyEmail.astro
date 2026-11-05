@@ -3,19 +3,25 @@
 // el link sigue funcionando como mailto: normal.
 import Icon from './Icon.astro';
 import { site } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
 
 interface Props {
-  variant: 'icon' | 'button';
+  variant: 'icon' | 'button' | 'link';
 }
 
 const { variant } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale));
 ---
 
-<span class="copy-email">
+<span class="copy-email" data-copied-msg={t('email.copied')}>
   {
     variant === 'icon' ? (
-      <a href={`mailto:${site.email}`} class="icon" data-copy-email={site.email} aria-label={`Copiar email ${site.email}`}>
+      <a href={`mailto:${site.email}`} class="icon" data-copy-email={site.email} aria-label={`${t('email.copy')} ${site.email}`}>
         <Icon name="mail" />
+      </a>
+    ) : variant === 'link' ? (
+      <a href={`mailto:${site.email}`} class="text-link" data-copy-email={site.email} title={t('email.clickToCopy')}>
+        <Icon name="mail" size={18} /> {site.email}
       </a>
     ) : (
       <a href={`mailto:${site.email}`} class="btn btn-primary" data-copy-email={site.email}>
@@ -37,7 +43,7 @@ const { variant } = Astro.props;
       try {
         await navigator.clipboard.writeText(link.dataset.copyEmail ?? '');
         if (toast) {
-          toast.textContent = 'Email copiado ✓';
+          toast.textContent = link.closest<HTMLElement>('.copy-email')?.dataset.copiedMsg ?? 'Email copiado ✓';
           toast.dataset.visible = 'true';
           clearTimeout(timer);
           timer = window.setTimeout(() => {

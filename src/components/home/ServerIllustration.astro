@@ -1,15 +1,28 @@
 ---
 // El homelab real es un notebook: aquí en pixel-art, con el flujo de servicios en su pantalla.
+import { getLang } from '../../i18n/ui';
+
 const units = ['UBUNTU SERVER', 'DOCKER STACKS', 'POSTGRES 16', 'RUNNER GITHUB'];
+const copy = {
+  es: {
+    title: 'Ilustración pixel-art del homelab',
+    desc: 'Un notebook que hace de servidor. En su pantalla: Cloudflare Tunnel arriba y debajo Ubuntu Server, los stacks de Docker, PostgreSQL 16 y el runner de GitHub Actions.',
+  },
+  en: {
+    title: 'Pixel-art illustration of the homelab',
+    desc: 'A laptop that works as a server. On its screen: Cloudflare Tunnel at the top and, below, Ubuntu Server, the Docker stacks, PostgreSQL 16 and the GitHub Actions runner.',
+  },
+  pt: {
+    title: 'Ilustração em pixel art do homelab',
+    desc: 'Um notebook que funciona como servidor. Na tela: Cloudflare Tunnel em cima e, abaixo, Ubuntu Server, os stacks do Docker, PostgreSQL 16 e o runner do GitHub Actions.',
+  },
+}[getLang(Astro.currentLocale)];
 const keys = Array.from({ length: 22 }, (_, i) => 10 + i * 8);
 ---
 
 <svg viewBox="0 0 200 144" role="img" aria-labelledby="server-title server-desc" class="server" shape-rendering="crispEdges">
-  <title id="server-title">Ilustración pixel-art del homelab</title>
-  <desc id="server-desc">
-    Un notebook que hace de servidor. En su pantalla: Cloudflare Tunnel arriba y debajo Ubuntu Server, los stacks de
-    Docker, PostgreSQL 16 y el runner de GitHub Actions.
-  </desc>
+  <title id="server-title">{copy.title}</title>
+  <desc id="server-desc">{copy.desc}</desc>
 
   <!-- tapa y pantalla -->
   <rect x="16" y="8" width="168" height="112" class="lid"></rect>

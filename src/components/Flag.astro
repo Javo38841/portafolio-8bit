@@ -1,0 +1,54 @@
+---
+// Banderas en SVG (los emojis de bandera no se ven en Windows). Proporción 3:2.
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const stripe = 20 / 13;
+---
+
+<svg class="flag" viewBox="0 0 30 20" shape-rendering="crispEdges" width="21" height="14" aria-hidden="true">
+  {
+    lang === 'es' && (
+      <>
+        <rect width="30" height="10" fill="#fff" />
+        <rect y="10" width="30" height="10" fill="#d52b1e" />
+        <rect width="10" height="10" fill="#0039a6" />
+        <polygon
+          fill="#fff"
+          points="5.00,2.30 5.62,4.15 7.57,4.17 6.00,5.32 6.59,7.18 5.00,6.05 3.41,7.18 4.00,5.32 2.43,4.17 4.38,4.15"
+        />
+      </>
+    )
+  }
+  {
+    lang === 'en' && (
+      <>
+        <rect width="30" height="20" fill="#fff" />
+        {Array.from({ length: 7 }, (_, i) => (
+          <rect y={i * 2 * stripe} width="30" height={stripe} fill="#b22234" />
+        ))}
+        <rect width="12" height={stripe * 7} fill="#3c3b6e" />
+      </>
+    )
+  }
+  {
+    lang === 'pt' && (
+      <>
+        <rect width="30" height="20" fill="#009c3b" />
+        <polygon points="3,10 15,2.2 27,10 15,17.8" fill="#ffdf00" />
+        <circle cx="15" cy="10" r="4.4" fill="#002776" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .flag {
+    flex: 0 0 auto;
+    box-shadow: 0 0 0 2px var(--ink);
+  }
+</style>

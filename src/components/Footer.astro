@@ -1,25 +1,166 @@
 ---
-import { site } from '../data/site';
+// Footer al estilo "ficha de jugador": quién soy, dónde encontrarme y créditos.
+import Icon from './Icon.astro';
+import CopyEmail from './CopyEmail.astro';
+import LanguagePicker from './LanguagePicker.astro';
+import { site, withBase } from '../data/site';
+import { getLang, useTranslations } from '../i18n/ui';
+
+const t = useTranslations(getLang(Astro.currentLocale));
+
+const year = new Date().getFullYear();
 ---
 
 <footer>
-  <div class="container inner">
-    <span>© {new Date().getFullYear()} {site.name}</span>
-    <span class="mono">Hecho con Astro · edición 8-bit</span>
+  <div class="container">
+    <div class="grid">
+      <div class="who">
+        <p class="name">{site.name}</p>
+        <p class="role">{t('site.role')}</p>
+        <p class="place mono">{site.location}</p>
+      </div>
+
+      <nav class="col" aria-label={t('footer.elsewhere')}>
+        <p class="label mono">{t('footer.elsewhere')}</p>
+        <ul>
+          {
+            site.linkedin && (
+              <li>
+                <a href={site.linkedin} rel="me noopener" target="_blank">
+                  <Icon name="linkedin" size={18} /> LinkedIn <span aria-hidden="true">↗</span>
+                </a>
+              </li>
+            )
+          }
+          {
+            site.instagram && (
+              <li>
+                <a href={site.instagram} rel="me noopener" target="_blank">
+                  <Icon name="instagram" size={18} /> Instagram <span class="mono handle">{site.instagramHandle}</span>
+                </a>
+              </li>
+            )
+          }
+          {
+            site.github && (
+              <li>
+                <a href={site.github} rel="me noopener" target="_blank">
+                  <Icon name="github" size={18} /> GitHub <span aria-hidden="true">↗</span>
+                </a>
+              </li>
+            )
+          }
+          <li class="email">
+            <CopyEmail variant="link" />
+          </li>
+          {
+            site.cvPdf && (
+              <li>
+                <a href={withBase(site.cvPdf)} download>
+                  <Icon name="download" size={18} /> {t('nav.cv')}
+                </a>
+              </li>
+            )
+          }
+        </ul>
+      </nav>
+
+      <div class="col">
+        <p class="label mono">{t('lang.label')}</p>
+        <LanguagePicker variant="list" />
+      </div>
+    </div>
+
+    <div class="bottom">
+      <span>© {year} {site.name}. {t('footer.rights')}</span>
+      <a href="#main" class="top">{t('footer.top')} <span aria-hidden="true">↑</span></a>
+    </div>
   </div>
 </footer>
 
 <style>
   footer {
-    border-top: 1px solid var(--line);
-    padding: 28px 0;
+    margin-top: 64px;
+    border-top: var(--px) solid var(--line);
+    padding: 48px 0 28px;
+    color: var(--ink-2);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 0.8fr;
+    gap: 32px 48px;
+  }
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  p {
+    margin: 0;
+  }
+  .name {
+    font-family: var(--font-display);
+    font-size: clamp(16px, 2.4vw, 22px);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .role {
+    margin-top: 6px;
+    font-size: 18px;
+  }
+  .place {
+    margin-top: 4px;
     font-size: 14px;
     color: var(--muted);
   }
-  .inner {
+  .label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul :global(a) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    color: var(--ink);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  ul :global(a:hover) {
+    color: var(--accent);
+  }
+  .handle {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .bottom {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
     gap: 8px 24px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--line);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .top {
+    color: var(--ink);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .top:hover {
+    color: var(--accent);
   }
 </style>

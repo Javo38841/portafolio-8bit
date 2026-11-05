@@ -1,40 +1,64 @@
 {
-  "_comment": "Libros del sitio. `applied` es dónde aplico cada libro de trabajo (borrador a partir del CV: reescríbelo con tu voz). `color` es la tela del lomo.",
+  "_comment": "Libros del sitio. `applied` es dónde aplico cada libro de trabajo, en es/en/pt (borrador a partir del CV: reescríbelo con tu voz). `color` es la tela del lomo.",
   "formation": [
     {
       "title": "The Mom Test",
       "author": "Rob Fitzpatrick",
-      "applied": "Para levantar requerimientos con usuarios finales: la API que integra el ERP con un CRM y el MVP de logística de vehículos.",
+      "applied": {
+        "es": "Para levantar requerimientos con usuarios finales: la API que integra el ERP con un CRM y el MVP de logística de vehículos.",
+        "en": "To gather requirements from end users: the API that integrates the ERP with a CRM and the vehicle logistics MVP.",
+        "pt": "Para levantar requisitos com usuários finais: a API que integra o ERP a um CRM e o MVP de logística de veículos."
+      },
       "color": "#7a2e2e"
     },
     {
       "title": "The Lean Startup",
       "author": "Eric Ries",
-      "applied": "En BeatMap, mi proyecto de título: apliqué sus principios durante el desarrollo.",
+      "applied": {
+        "es": "En BeatMap, mi proyecto de título: apliqué sus principios durante el desarrollo.",
+        "en": "In BeatMap, my capstone project: I applied its principles throughout development.",
+        "pt": "No BeatMap, meu trabalho de conclusão: apliquei seus princípios durante o desenvolvimento."
+      },
       "color": "#2f4f6b"
     },
     {
       "title": "Design Patterns",
       "author": "Gamma, Helm, Johnson y Vlissides",
-      "applied": "En mis ayudantías (MVC y programación orientada a objetos) y en la arquitectura de mis proyectos.",
+      "applied": {
+        "es": "En mis ayudantías (MVC y programación orientada a objetos) y en la arquitectura de mis proyectos.",
+        "en": "In my teaching assistant sessions (MVC and object-oriented programming) and in the architecture of my projects.",
+        "pt": "Nas minhas monitorias (MVC e programação orientada a objetos) e na arquitetura dos meus projetos."
+      },
       "color": "#3e5f3a"
     },
     {
       "title": "The Toyota Way",
       "author": "Jeffrey K. Liker",
-      "applied": "En la gestión de incidencias con Kanban y principios TPS/Lean en mi trabajo.",
+      "applied": {
+        "es": "En la gestión de incidencias con Kanban y principios TPS/Lean en mi trabajo.",
+        "en": "In incident management with Kanban and TPS/Lean principles at work.",
+        "pt": "Na gestão de incidentes com Kanban e princípios TPS/Lean no meu trabalho."
+      },
       "color": "#8c2f2f"
     },
     {
       "title": "Toyota Talent",
       "author": "Jeffrey K. Liker y David P. Meier",
-      "applied": "En cómo diseño mis talleres y capacito a otras personas.",
+      "applied": {
+        "es": "En cómo diseño mis talleres y capacito a otras personas.",
+        "en": "In how I design my workshops and train other people.",
+        "pt": "Em como crio minhas oficinas e capacito outras pessoas."
+      },
       "color": "#7a5b14"
     },
     {
       "title": "Las 5 disfunciones de un equipo",
       "author": "Patrick Lencioni",
-      "applied": "Al coordinar equipos de desarrollo, desde mi práctica profesional hasta el LMS.",
+      "applied": {
+        "es": "Al coordinar equipos de desarrollo, desde mi práctica profesional hasta el LMS.",
+        "en": "When coordinating development teams, from my internship to the LMS.",
+        "pt": "Ao coordenar equipes de desenvolvimento, desde meu estágio até o LMS."
+      },
       "color": "#5a3a5e"
     }
   ],
